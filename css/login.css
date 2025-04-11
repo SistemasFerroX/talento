@@ -1,0 +1,55 @@
+/* login.css */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('../images/fondo.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* Contenedor del formulario */
+.login-container {
+  /* Aumenta el ancho total del formulario */
+  width: 400px;           
+  /* Ajusta el margen para ubicarlo más abajo (150px desde arriba, 20px desde abajo) */
+  margin: 150px auto 20px;  
+  /* Aumenta el relleno interno para agrandar la caja */
+  padding: 30px;           
+  background: #343232;
+  border-radius: 8px;
+  box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+/* Logo */
+.logo img {
+  width: 120px;        /* Hazlo un poco más grande si quieres */
+  margin-bottom: 20px;
+}
+
+/* Inputs del formulario */
+form input {
+  width: 95%;          /* Un poco más ancho */
+  padding: 12px;       /* Más alto */
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;     /* Tamaño de fuente */
+}
+
+/* Botón */
+form button {
+  width: 100%;
+  padding: 12px;
+  background: #007BFF;
+  border: none;
+  color: #fff;
+  font-size: 18px;     /* Aumenta la fuente para un botón más grande */
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #0056b3;
+}

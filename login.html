@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Plataforma de Cursos</title>
+  <link rel="stylesheet" href="css/banner.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <!-- Banner como franja superior -->
+  <div id="banner">
+    <img src="images/banner.png" alt="Banner de la Empresa">
+  </div>
+  
+  <!-- Contenedor del formulario de login -->
+  <div class="login-container">
+    <div class="logo">
+      <img src="images/logo.png" alt="Logo de la Empresa">
+    </div>
+    <form action="php/login.php" method="POST">
+      <input type="text" name="cedula" placeholder="Cédula" required>
+      <input type="password" name="password" placeholder="Contraseña" required>
+      <button type="submit">Iniciar Sesión</button>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+/* header.css */
+#banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #4285f4; /* O usa una imagen de fondo si lo prefieres */
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    z-index: 10000;
+  }
+  
+  #banner img {
+    max-height: 60px;
+    vertical-align: middle;
+  }
+  
+  /* Agrega un margen superior al contenedor principal para evitar que el banner lo tape */
+  body {
+    padding-top: 80px; /* Ajusta según la altura del banner */
+  }
+  

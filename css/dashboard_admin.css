@@ -1,0 +1,76 @@
+/* Reseteo básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  color: #333;
+}
+
+/* Banner completo */
+.banner {
+  width: 100%;
+}
+.banner img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Encabezado azul con dos filas (saludo y botones) */
+.top-header {
+  background: #0066cc;  /* Azul */
+  color: #fff;
+  display: flex;
+  flex-direction: column; /* Para tener el mensaje arriba y la fila de botones abajo */
+  align-items: center;    /* Centrar contenido horizontalmente */
+  padding: 10px 0;
+}
+
+/* Mensaje de bienvenida centrado */
+.top-header h1 {
+  font-size: 1.4em;
+  margin-bottom: 10px; /* Espacio entre el texto y la barra de botones */
+}
+
+/* Barra de navegación con los botones en fila */
+.nav-bar {
+  list-style: none;
+  display: flex; 
+  gap: 10px;       /* Espacio horizontal entre botones */
+}
+
+/* Botones "white-box" */
+.white-box-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;        /* Fondo blanco */
+  color: #0066cc;          /* Texto azul */
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid #0066cc;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Ícono dentro del botón */
+.white-box-btn i {
+  margin-right: 6px;
+}
+
+/* Hover: invertir colores */
+.white-box-btn:hover {
+  background: #0066cc;
+  color: #fff;
+}
+
+/* Contenido principal */
+.main-content {
+  padding: 20px;
+}

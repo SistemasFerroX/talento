@@ -1,0 +1,139 @@
+/* course_content.css */
+
+/* Reset y base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    color: #202124;
+    padding: 20px;
+  }
+  
+  /* Encabezado del curso */
+  .course-header {
+    background-color: #4285f4;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    border-radius: 4px;
+  }
+  
+  /* Contenedor principal del contenido del curso */
+  .course-content {
+    max-width: 800px;
+    margin: 30px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Sección de información del curso */
+  .course-info {
+    margin-bottom: 30px;
+  }
+  .course-info h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #202124;
+  }
+  .course-info p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  /* Sección de materiales de apoyo */
+  .materials {
+    margin-bottom: 30px;
+  }
+  .materials h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #202124;
+  }
+  .materials h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #202124;
+  }
+  .materials ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .materials li {
+    margin-bottom: 8px;
+  }
+  .materials a {
+    text-decoration: none;
+    color: #4285f4;
+  }
+  .materials a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Sección interactiva (cuestionario o contenido interactivo) */
+  .interactive-content {
+    margin-bottom: 30px;
+  }
+  .interactive-content h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #202124;
+  }
+  .interactive-content .question {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  .interactive-content .question p {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .interactive-content label {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  /* Botón de envío del cuestionario */
+  .btn-submit {
+    display: block;
+    background-color: #4285f4;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 20px auto;
+    transition: background-color 0.3s;
+  }
+  .btn-submit:hover {
+    background-color: #3367d6;
+  }
+  
+  /* Footer del curso */
+  .course-footer {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .course-footer .btn-back {
+    background-color: #4285f4;
+    color: #fff;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  .course-footer .btn-back:hover {
+    background-color: #3367d6;
+  }
+  
