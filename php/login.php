@@ -16,13 +16,17 @@ session_start();
 
 require 'config.php';
 
+// Al realizar POST se procede con el login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Escapar la cédula para prevenir inyección SQL
     $cedula = $mysqli->real_escape_string($_POST['cedula']);
     $password = $_POST['password'];
     
-    // Buscar el usuario por cédula
-    $query = "SELECT id, nombre_completo, password, rol FROM users WHERE cedula = '$cedula' LIMIT 1";
+    // Buscar el usuario por cédula e incluir el campo empresa
+    $query = "SELECT id, nombre_completo, password, rol, empresa 
+              FROM users 
+              WHERE cedula = '$cedula' 
+              LIMIT 1";
     $result = $mysqli->query($query);
     
     if (!$result) {
@@ -34,10 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $result->fetch_assoc();
         
         if (password_verify($password, $user['password'])) {
-            // Guardar datos en sesión
+            // Guardar datos en sesión, incluyendo la empresa del usuario
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['nombre'] = $user['nombre_completo'];
             $_SESSION['rol'] = $user['rol'];
+            $_SESSION['empresa'] = $user['empresa'];  // <-- Agregamos la empresa
             
             // Redirigir según el rol del usuario
             if ($user['rol'] == 'admin') {

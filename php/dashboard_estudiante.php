@@ -16,18 +16,21 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'estudiante') {
 require 'config.php';
 
 $student_id = $_SESSION['user_id'];
+// Filtrar por la misma empresa del usuario
+$empresa = $mysqli->real_escape_string($_SESSION['empresa']);
 
-// Cursos disponibles (no inscritos)
+// Cursos disponibles (no inscritos) solo de la misma empresa
 $query_available = "
     SELECT *
     FROM courses
     WHERE id NOT IN (
         SELECT course_id FROM enrollments WHERE user_id = $student_id
     )
+    AND empresa = '$empresa'
 ";
 $result_available = $mysqli->query($query_available);
 
-// "Mis Cursos" (inscritos) que aún no están aprobados
+// "Mis Cursos" (inscritos) que aún no están aprobados, filtrando por empresa
 $query_enrolled = "
     SELECT 
       c.id, 
@@ -44,6 +47,7 @@ $query_enrolled = "
     FROM courses c
     JOIN enrollments e ON c.id = e.course_id
     WHERE e.user_id = $student_id
+      AND c.empresa = '$empresa'
     HAVING calificacion < 80 OR calificacion IS NULL
 ";
 $result_enrolled = $mysqli->query($query_enrolled);
@@ -85,7 +89,7 @@ $result_enrolled = $mysqli->query($query_enrolled);
       <span class="username">Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
       <!-- Botón de Mi Perfil -->
       <a href="perfil_estudiante.php" class="profile-btn">Mi Perfil</a>
-     <!-- Botón para acceder al Foro -->
+      <!-- Botón para acceder al Foro -->
       <a href="forum.php" class="forum-btn">Foro</a>
       <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
     </div>

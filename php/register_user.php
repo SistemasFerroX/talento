@@ -9,16 +9,18 @@ session_set_cookie_params([
 ]);
 session_start();
 
+require '../php/config.php'; // Asegúrate de que la ruta sea correcta
+
 $mensaje = ""; // Variable para mostrar mensajes
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Recoger y sanear los datos enviados
-    $cedula    = $mysqli->real_escape_string($_POST['cedula']);
-    $nombre    = $mysqli->real_escape_string($_POST['nombre']);
-    $apellidos = $mysqli->real_escape_string($_POST['apellidos']);
-    $correo    = isset($_POST['correo']) ? $mysqli->real_escape_string($_POST['correo']) : "";
-    $rol       = $mysqli->real_escape_string($_POST['rol']);
-    // Los nuevos campos de empresa
+    // Recoger y sanear los datos enviados utilizando la conexión $mysqli
+    $cedula          = $mysqli->real_escape_string($_POST['cedula']);
+    $nombre          = $mysqli->real_escape_string($_POST['nombre']);
+    $apellidos       = $mysqli->real_escape_string($_POST['apellidos']);
+    $correo          = isset($_POST['correo']) ? $mysqli->real_escape_string($_POST['correo']) : "";
+    $rol             = $mysqli->real_escape_string($_POST['rol']);
+    // Los campos de empresa
     $empresa         = $mysqli->real_escape_string($_POST['empresa']);
     $sub_empresa     = isset($_POST['sub_empresa']) ? $mysqli->real_escape_string($_POST['sub_empresa']) : "";
     $sub_sub_empresa = isset($_POST['sub_sub_empresa']) ? $mysqli->real_escape_string($_POST['sub_sub_empresa']) : "";
@@ -29,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // La contraseña se establece igual a la cédula y se cifra
     $hashed_password = password_hash($cedula, PASSWORD_DEFAULT);
     
-    // Inserta los datos; se agregan los nuevos campos sub_empresa, sub_sub_empresa y celular
+    // Inserta los datos; se agregan los campos opcionales sub_empresa y sub_sub_empresa
     $query = "INSERT INTO users (cedula, nombre_completo, apellidos, correo, password, rol, empresa, cargo, celular) 
               VALUES ('$cedula', '$nombre', '$apellidos', '$correo', '$hashed_password', '$rol', '$empresa', '$cargo', '$celular')";
     
@@ -50,8 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- Enlace al CSS -->
   <link rel="stylesheet" href="../css/registro.css">
   <style>
-    /* Puedes agregar estilos adicionales o incluirlos en tu archivo registro.css */
-    /* Ejemplo de estilos para los nuevos selects en cascada */
+    /* Ejemplo de estilos para los selects en cascada */
     .form-group select {
       width: 100%;
       padding: 8px;
@@ -110,15 +111,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="Agrosigo2">Agrosigo</option>
           </select>
         </div>
+        <!-- Los siguientes selects son opcionales; por ello, se elimina el atributo "required" -->
         <div class="form-group">
-          <label for="sub_empresa" style="display:none;">Seleccione la Sub-Opción:</label>
-          <select name="sub_empresa" id="sub_empresa" style="display:none;" required>
+          <label for="sub_empresa" style="display:none;">Seleccione la Sub-Opción (opcional):</label>
+          <select name="sub_empresa" id="sub_empresa" style="display:none;">
             <!-- Se rellenará dinámicamente -->
           </select>
         </div>
         <div class="form-group">
-          <label for="sub_sub_empresa" style="display:none;">Seleccione la Sub-Sub-Opción:</label>
-          <select name="sub_sub_empresa" id="sub_sub_empresa" style="display:none;" required>
+          <label for="sub_sub_empresa" style="display:none;">Seleccione la Sub-Sub-Opción (opcional):</label>
+          <select name="sub_sub_empresa" id="sub_sub_empresa" style="display:none;">
             <!-- Se rellenará dinámicamente -->
           </select>
         </div>
@@ -141,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <!-- Script para el select cascada -->
   <script>
-    // Definición de los datos para cada empresa con 4 sub-opciones y 3 sub-sub-opciones cada una.
+    // Definición de los datos para cada empresa con sus sub-opciones (estos pueden usarse si lo deseas)
     const empresaData = {
       "Ferbienes": {
         "Opción 1": ["Sub1-1", "Sub1-2", "Sub1-3"],
@@ -175,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Cuando cambia el select de Empresa
     selectEmpresa.addEventListener("change", function() {
-      // Limpiar y ocultar los otros selects
+      // Limpiar y actualizar la visibilidad de los selects
       selectSubEmpresa.innerHTML = "";
       selectSubSubEmpresa.innerHTML = "";
       document.querySelector("label[for='sub_empresa']").style.display = "block";
@@ -188,12 +190,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Agregar opción predeterminada
         let defaultOption = document.createElement("option");
         defaultOption.value = "";
-        defaultOption.textContent = "Seleccione una opción";
+        defaultOption.textContent = "Seleccione una opción (opcional)";
         defaultOption.disabled = true;
         defaultOption.selected = true;
         selectSubEmpresa.appendChild(defaultOption);
         
-        // Rellenar el select de sub-empresa con las claves del objeto
+        // Rellenar el select de sub-empresa
         const subOpciones = Object.keys(empresaData[empresaElegida]);
         subOpciones.forEach(function(subOp) {
           let option = document.createElement("option");
@@ -216,12 +218,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (empresaElegida && subElegida && empresaData[empresaElegida][subElegida]) {
         let defaultOption = document.createElement("option");
         defaultOption.value = "";
-        defaultOption.textContent = "Seleccione una opción";
+        defaultOption.textContent = "Seleccione una opción (opcional)";
         defaultOption.disabled = true;
         defaultOption.selected = true;
         selectSubSubEmpresa.appendChild(defaultOption);
         
-        // Rellenar sub-sub-empresa
+        // Rellenar el select de sub-sub-empresa
         empresaData[empresaElegida][subElegida].forEach(function(subSubOp) {
           let option = document.createElement("option");
           option.value = subSubOp;

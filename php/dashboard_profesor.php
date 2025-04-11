@@ -9,21 +9,23 @@ session_set_cookie_params([
 ]);
 session_start();
 
+// Verificar que el usuario esté autenticado y sea profesor
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'profesor') {
     header("Location: ../login.html");
     exit;
 }
-
 require '../php/config.php'; // Asegúrate de que la ruta al archivo de configuración sea correcta
 
 $profesor_id = $_SESSION['user_id'];
+// Obtener la empresa del profesor desde la sesión
+$empresaProfesor = $mysqli->real_escape_string($_SESSION['empresa']);
 $message = '';
 
-// Procesar inscripción (con GET)
+// Procesar inscripción (a través de GET)
 if (isset($_GET['enroll_student'])) {
     $course_id  = (int)$_GET['course_id'];
     $student_id = (int)$_GET['student_id'];
-
+    
     // Verificar que el curso sea del profesor
     $stmt = $mysqli->prepare("SELECT * FROM courses WHERE id = ? AND profesor_id = ?");
     $stmt->bind_param("ii", $course_id, $profesor_id);
@@ -32,27 +34,41 @@ if (isset($_GET['enroll_student'])) {
     if ($result->num_rows === 0) {
         $message = "No tienes permisos para inscribir en este curso.";
     } else {
-        // Verificar si ya está inscrito
-        $stmt = $mysqli->prepare("SELECT * FROM enrollments WHERE course_id = ? AND user_id = ?");
-        $stmt->bind_param("ii", $course_id, $student_id);
-        $stmt->execute();
-        $resEnroll = $stmt->get_result();
-        if ($resEnroll->num_rows > 0) {
-            $message = "El estudiante ya está matriculado en este curso.";
+        // Verificar que el estudiante pertenezca a la misma empresa
+        $stmtStudent = $mysqli->prepare("SELECT empresa FROM users WHERE id = ?");
+        $stmtStudent->bind_param("i", $student_id);
+        $stmtStudent->execute();
+        $resultStudent = $stmtStudent->get_result();
+        if ($resultStudent->num_rows === 0) {
+            $message = "Estudiante no encontrado.";
         } else {
-            // Insertar la inscripción
-            $stmt = $mysqli->prepare("INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)");
-            $stmt->bind_param("ii", $student_id, $course_id);
-            if ($stmt->execute()) {
-                $message = "¡Estudiante inscrito correctamente!";
+            $studentInfo = $resultStudent->fetch_assoc();
+            if ($studentInfo['empresa'] !== $empresaProfesor) {
+                $message = "El estudiante no pertenece a tu empresa.";
             } else {
-                $message = "Error al inscribir: " . $mysqli->error;
+                // Verificar si ya está inscrito
+                $stmtCheck = $mysqli->prepare("SELECT * FROM enrollments WHERE course_id = ? AND user_id = ?");
+                $stmtCheck->bind_param("ii", $course_id, $student_id);
+                $stmtCheck->execute();
+                $resEnroll = $stmtCheck->get_result();
+                if ($resEnroll->num_rows > 0) {
+                    $message = "El estudiante ya está matriculado en este curso.";
+                } else {
+                    // Insertar la inscripción
+                    $stmtEnroll = $mysqli->prepare("INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)");
+                    $stmtEnroll->bind_param("ii", $student_id, $course_id);
+                    if ($stmtEnroll->execute()) {
+                        $message = "¡Estudiante inscrito correctamente!";
+                    } else {
+                        $message = "Error al inscribir: " . $mysqli->error;
+                    }
+                }
             }
         }
     }
 }
 
-// Procesar desinscripción mediante GET
+// Procesar desinscripción (mediante GET)
 if (isset($_GET['unenroll'])) {
     $enrollment_id = (int)$_GET['unenroll'];
     // Verificar que la inscripción pertenezca a un curso del profesor
@@ -63,10 +79,9 @@ if (isset($_GET['unenroll'])) {
     if ($result->num_rows === 0) {
         $message = "No tienes permisos para desinscribir a este estudiante.";
     } else {
-        // Eliminar la inscripción
-        $stmt = $mysqli->prepare("DELETE FROM enrollments WHERE id = ?");
-        $stmt->bind_param("i", $enrollment_id);
-        if ($stmt->execute()) {
+        $stmtDelete = $mysqli->prepare("DELETE FROM enrollments WHERE id = ?");
+        $stmtDelete->bind_param("i", $enrollment_id);
+        if ($stmtDelete->execute()) {
             $message = "Estudiante desinscrito exitosamente.";
         } else {
             $message = "Error al desinscribir: " . $mysqli->error;
@@ -74,11 +89,11 @@ if (isset($_GET['unenroll'])) {
     }
 }
 
-// Consultar los cursos del profesor
-$stmt = $mysqli->prepare("SELECT id, nombre FROM courses WHERE profesor_id = ?");
-$stmt->bind_param("i", $profesor_id);
-$stmt->execute();
-$courses = $stmt->get_result();
+// Consultar los cursos del profesor (solo los que haya creado)
+$stmtCourses = $mysqli->prepare("SELECT id, nombre FROM courses WHERE profesor_id = ?");
+$stmtCourses->bind_param("i", $profesor_id);
+$stmtCourses->execute();
+$courses = $stmtCourses->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -90,7 +105,7 @@ $courses = $stmt->get_result();
   <!-- Enlace a tu CSS de dashboard -->
   <link rel="stylesheet" href="../css/dashboard_profesor.css">
   <style>
-    /* Puedes agregar estilos específicos o ajustar los existentes */
+    /* Estilos generales */
     .top-header { 
       background: #003366;
       color: #fff;
@@ -120,6 +135,43 @@ $courses = $stmt->get_result();
       background: #003366;
       color: #fff;
     }
+    .alert-message {
+      background: #e9f7ef;
+      border: 1px solid #c3e6cb;
+      padding: 12px;
+      color: #155724;
+      text-align: center;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+    .course-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .course-list li {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .course-card {
+      margin-bottom: 15px;
+    }
+    .course-card h3 {
+      margin: 0 0 5px;
+    }
+    .course-card button,
+    .course-card a {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: #fff;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .course-card button:hover,
+    .course-card a:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body>
@@ -135,9 +187,7 @@ $courses = $stmt->get_result();
     <ul class="nav-bar">
       <li><a href="create_course.php"><i class="fa fa-plus"></i> Crear Curso</a></li>
       <li><a href="mis_cursos.php"><i class="fa fa-book"></i> Ver Mis Cursos</a></li>
-      <!-- Cambiamos el enlace de Mi Perfil para redirigir al perfil del profesor -->
       <li><a href="perfil_profesor.php"><i class="fa fa-user"></i> Mi Perfil</a></li>
-      <!-- Agregamos el botón para acceder al Foro -->
       <li><a href="forum.php"><i class="fa fa-comments"></i> Foro</a></li>
       <li><a href="logout.php"><i class="fa fa-sign-out"></i> Cerrar Sesión</a></li>
     </ul>
@@ -163,18 +213,20 @@ $courses = $stmt->get_result();
                 Inscribir Estudiantes
               </button>
               
-              <!-- Sección oculta: estudiantes no inscritos en este curso -->
+              <!-- Sección oculta: estudiantes no inscritos en este curso (filtrados por empresa) -->
               <div class="enroll-section" id="enroll-section-<?php echo $course['id']; ?>" style="display: none;">
                 <?php
+                  // Se seleccionan solo estudiantes de la misma empresa
                   $stmtNotEnrolled = $mysqli->prepare("
                     SELECT id, nombre_completo
                     FROM users
                     WHERE rol = 'estudiante'
+                      AND empresa = ?
                       AND id NOT IN (
                         SELECT user_id FROM enrollments WHERE course_id = ?
                       )
                   ");
-                  $stmtNotEnrolled->bind_param("i", $course['id']);
+                  $stmtNotEnrolled->bind_param("si", $empresaProfesor, $course['id']);
                   $stmtNotEnrolled->execute();
                   $notEnrolled = $stmtNotEnrolled->get_result();
                   if ($notEnrolled->num_rows > 0):
@@ -191,7 +243,7 @@ $courses = $stmt->get_result();
                 ?>
               </div>
               
-              <!-- Botón para mostrar la sección de estudiantes ya inscritos -->
+              <!-- Botón para mostrar la sección de estudiantes inscritos -->
               <button class="toggle-enrolled" data-courseid="<?php echo $course['id']; ?>">
                 Ver Estudiantes Inscritos
               </button>

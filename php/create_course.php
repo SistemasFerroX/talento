@@ -9,6 +9,7 @@ session_set_cookie_params([
 ]);
 session_start();
 
+// Verificar que el usuario esté autenticado y que sea profesor
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'profesor') {
     header("Location: ../login.html");
     exit;
@@ -16,7 +17,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'profesor') {
 require 'config.php';
 
 $mensaje = "";
+// Recoger la empresa del profesor desde la sesión
+$empresaProfesor = isset($_SESSION['empresa']) ? $_SESSION['empresa'] : "";
 
+// Cuando se envía el formulario para crear el curso
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Recoger y sanear datos
     $nombre = $mysqli->real_escape_string($_POST['nombre']);
@@ -25,8 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $profesor_id = $_SESSION['user_id'];
     
     // Insertar el curso en la tabla "courses"
-    $query = "INSERT INTO courses (nombre, descripcion, profesor_id) 
-              VALUES ('$nombre', '$descripcion', $profesor_id)";
+    // Se añade la columna "empresa" usando la variable $empresaProfesor
+    $query = "INSERT INTO courses (nombre, descripcion, profesor_id, fecha_creacion, empresa) 
+              VALUES ('$nombre', '$descripcion', $profesor_id, NOW(), '$empresaProfesor')";
               
     if ($mysqli->query($query)) {
          $curso_id = $mysqli->insert_id;
@@ -67,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              }
          }
          
+         // Redirigir a la creación de preguntas o confirmar la creación del curso
          header("Location: create_question.php?course_id=" . $curso_id);
          exit;
     } else {
@@ -87,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <!-- Botón fijo para volver al dashboard -->
   <a href="dashboard_profesor.php" class="back-button">Volver al Dashboard</a>
-  
+
   <div class="container">
     <h1>Crear Curso</h1>
     <?php if(!empty($mensaje)): ?>
