@@ -58,103 +58,129 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'admin') {
     .main-content {
         padding: 20px;
     }
-    /* Sección de reportes */
+    /* Sección Reportes */
     .reports-section {
         background-color: #fff;
-        padding: 20px;
-        margin: 20px auto;
-        max-width: 800px;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        padding: 30px;
+        margin: 30px auto;
+        max-width: 900px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
     }
     .reports-section h3 {
         text-align: center;
         color: #003366;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
+        font-size: 22px;
     }
     .reports-grid {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 20px;
+        gap: 25px;
     }
     .report-card {
         background-color: #f8f8f8;
         width: 250px;
-        padding: 20px;
+        padding: 25px;
         border-radius: 8px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         text-align: center;
     }
     .report-card h3 {
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         color: #003366;
+        font-size: 18px;
     }
     .report-card p {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         color: #555;
+        font-size: 14px;
     }
     .report-link {
         display: inline-block;
-        padding: 10px 20px;
+        padding: 12px 25px;
         background-color: #007BFF;
         color: #fff;
         text-decoration: none;
         border-radius: 4px;
         transition: background 0.3s;
+        font-size: 15px;
     }
     .report-link:hover {
         background-color: #0056b3;
     }
+    .dashboard-info {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 20px;
+      background: #28a745;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.3s;
+      font-size: 15px;
+    }
+    .back-btn:hover {
+      background: #1e7e34;
+    }
   </style>
 </head>
 <body>
-  <!-- Banner completo -->
+  <!-- Banner -->
   <div class="banner">
     <img src="../images/banner.png" alt="Banner Talento+">
   </div>
 
-  <!-- Encabezado con saludo y navegación -->
+  <!-- Encabezado y navegación -->
   <header class="top-header">
     <h1>Bienvenido, Administrador <?php echo htmlspecialchars($_SESSION['nombre']); ?></h1>
     <ul class="nav-bar">
-      <li><a href="register_user.php" class="white-box-btn"><i class="fa fa-users"></i> Gestionar Usuarios</a></li>
-      <li><a href="dashboard_admin.php" class="white-box-btn"><i class="fa fa-home"></i> Inicio</a></li>
-      <li><a href="system_settings.php" class="white-box-btn"><i class="fa fa-cog"></i> Configuración</a></li>
-      <li><a href="logout.php" class="white-box-btn"><i class="fa fa-sign-out"></i> Cerrar Sesión</a></li>
+      <li><a href="register_user.php"><i class="fa fa-users"></i> Gestionar Usuarios</a></li>
+      <li><a href="dashboard_admin.php"><i class="fa fa-home"></i> Inicio</a></li>
+      <li><a href="system_settings.php"><i class="fa fa-cog"></i> Configuración</a></li>
+      <!-- Botón de Foro en la barra de navegación -->
+      <li><a href="forum.php"><i class="fa fa-comments"></i> Foro</a></li>
+      <li><a href="logout.php"><i class="fa fa-sign-out"></i> Cerrar Sesión</a></li>
     </ul>
   </header>
-  
-  <!-- Contenido principal -->
+
+  <!-- Contenido principal del Dashboard -->
   <main class="main-content">
-    <h2>Escritorio Administrador</h2>
-    <p>Aquí puedes gestionar usuarios, revisar configuraciones y generar reportes.</p>
-    
-    <!-- Sección de Reportes que se muestra al hacer clic en el botón "Reportes" -->
-    <!-- Puedes mostrar esta sección de forma modal o a pantalla completa según tu preferencia -->
+    <div class="dashboard-info">
+      <h2>Escritorio Administrador</h2>
+      <p>Aquí puedes gestionar usuarios, revisar configuraciones y generar reportes.</p>
+    </div>
+
+    <!-- Sección de Reportes -->
     <section class="reports-section">
       <h3>Reportes Disponibles</h3>
       <div class="reports-grid">
-        <!-- Reporte 1: Informe por Estudiante -->
+        <!-- Informe por Estudiante -->
         <div class="report-card">
           <h3>Informe por Estudiante</h3>
-          <p>Ver un listado de estudiantes y generar un informe PDF con los cursos realizados, notas y fechas.</p>
+          <p>Genera un PDF con la información de los cursos realizados por un estudiante.</p>
           <a href="lista_estudiantes.php" class="report-link">Ver Informe</a>
         </div>
-        <!-- Reporte 2: Informe por Curso -->
+        <!-- Informe por Curso -->
         <div class="report-card">
           <h3>Informe por Curso</h3>
-          <p>Ver un listado de cursos y generar un informe PDF con los estudiantes inscritos, notas y fechas de realización.</p>
+          <p>Genera un PDF con el listado de estudiantes inscritos en un curso.</p>
           <a href="lista_cursos.php" class="report-link">Ver Informe</a>
         </div>
-        <!-- Reporte 3: Informe General por Rango de Fechas -->
+        <!-- Informe General por Rango de Fechas -->
         <div class="report-card">
           <h3>Informe General</h3>
-          <p>Seleccionar un rango de fechas y generar un informe PDF de estudiantes que realizaron cursos en ese período.</p>
+          <p>Selecciona un rango de fechas y genera un informe PDF de inscripciones en ese período.</p>
           <a href="informe_general_form.php" class="report-link">Ver Informe</a>
         </div>
       </div>
     </section>
+
   </main>
 </body>
 </html>

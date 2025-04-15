@@ -2,8 +2,8 @@
 session_set_cookie_params([
     'lifetime' => 0,
     'path'     => '/',
-    'domain'   => '',       // O 'localhost' si lo prefieres
-    'secure'   => false,    // false, porque usas HTTP y no HTTPS
+    'domain'   => '',      // O 'localhost' si lo prefieres
+    'secure'   => false,   // false, porque usas HTTP y no HTTPS
     'httponly' => true,
     'samesite' => 'Lax'
 ]);
@@ -16,26 +16,31 @@ if (!isset($_SESSION['user_id'])) {
 require 'config.php';
 
 $user_id   = $_SESSION['user_id'];
-$user_role = $_SESSION['rol']; // "estudiante", "profesor", etc.
+$user_role = $_SESSION['rol']; // "estudiante", "profesor", "admin"
 $mensaje   = "";
 
-// Generar enlaces dinámicos según el rol
-$dashboardLink = ($user_role === 'profesor') ? 'dashboard_profesor.php' : 'dashboard_estudiante.php';
-$perfilLink    = ($user_role === 'profesor') ? 'perfil_profesor.php'    : 'perfil_estudiante.php';
+// Definir los enlaces al dashboard y al perfil según el rol
+if ($user_role == 'admin') {
+    $dashboardLink = 'dashboard_admin.php';
+    $perfilLink    = 'system_settings.php'; // Para admin, el perfil es la configuración
+} elseif ($user_role == 'profesor') {
+    $dashboardLink = 'dashboard_profesor.php';
+    $perfilLink    = 'perfil_profesor.php';
+} else {
+    $dashboardLink = 'dashboard_estudiante.php';
+    $perfilLink    = 'perfil_estudiante.php';
+}
 
-// Procesar "like" (toggle: si ya dio like, se quita; de lo contrario, se agrega)
+// Procesar "like" (toggle)
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['like_question'])) {
     $question_id = (int)$_GET['like_question'];
-    // Verificar si el usuario ya dio like a esta pregunta
     $checkQuery  = "SELECT * FROM forum_question_likes WHERE question_id = $question_id AND user_id = $user_id";
     $checkResult = $mysqli->query($checkQuery);
     
     if ($checkResult->num_rows > 0) {
-         // Ya dio like, se quita
          $deleteQuery = "DELETE FROM forum_question_likes WHERE question_id = $question_id AND user_id = $user_id";
          $mysqli->query($deleteQuery);
     } else {
-         // No ha dado like, se agrega
          $insertQuery = "INSERT INTO forum_question_likes (question_id, user_id) VALUES ($question_id, $user_id)";
          $mysqli->query($insertQuery);
     }
@@ -43,20 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['like_question'])) {
     exit;
 }
 
-// Procesar publicación de una nueva pregunta (solo estudiantes)
+// Procesar publicación de nueva pregunta (solo estudiantes)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] == 'post_question') {
     if ($user_role != 'estudiante') {
         $mensaje = "Solo los estudiantes pueden publicar preguntas.";
     } else {
         $title   = $mysqli->real_escape_string($_POST['title']);
         $content = $mysqli->real_escape_string($_POST['content']);
-        // Procesar imágenes adjuntas (opcional)
         $imageNames = array();
         $uploadDir = __DIR__ . "/../uploads/forum/";
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
-        // Verificar que se haya seleccionado al menos un archivo
         if (isset($_FILES['question_images']) && !empty($_FILES['question_images']['name'][0])) {
             for ($i = 0; $i < count($_FILES['question_images']['name']); $i++) {
                 if ($_FILES['question_images']['error'][$i] === UPLOAD_ERR_OK) {
@@ -67,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');
                     
                     if (in_array($fileExtension, $allowedExtensions)) {
-                        // Para que cada imagen tenga un nombre único
                         $newImageName = $user_id . "_" . time() . "_" . $i . "." . $fileExtension;
                         $dest_path = $uploadDir . $newImageName;
                         if (move_uploaded_file($fileTmpPath, $dest_path)) {
@@ -76,15 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                             $mensaje .= "Error al subir la imagen $fileName. ";
                         }
                     } else {
-                        $mensaje .= "Extensión de archivo no permitida para la imagen $fileName. ";
+                        $mensaje .= "Extensión no permitida para $fileName. ";
                     }
                 }
             }
         }
-        // Convertir el array de imágenes a una cadena separada por comas (si no se subió ninguna, será NULL)
         $imagesStr = count($imageNames) > 0 ? "'" . $mysqli->real_escape_string(implode(",", $imageNames)) . "'" : "NULL";
         
-        // Insertar la pregunta (los likes se contarán dinámicamente)
         $query = "INSERT INTO forum_questions (user_id, title, content, image) 
                   VALUES ($user_id, '$title', '$content', $imagesStr)";
         if ($mysqli->query($query)) {
@@ -95,10 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Procesar publicación de una respuesta (solo profesores)
+// Procesar publicación de respuesta (para profesores y admin)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] == 'post_answer') {
-    if ($user_role != 'profesor') {
-        $mensaje = "Solo los profesores pueden responder preguntas.";
+    if ($user_role != 'profesor' && $user_role != 'admin') {
+        $mensaje = "Solo profesores y administradores pueden responder preguntas.";
     } else {
         $question_id    = (int)$_POST['question_id'];
         $answer_content = $mysqli->real_escape_string($_POST['answer_content']);
@@ -113,7 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // Obtener todas las preguntas (más recientes primero)
-// Se utiliza una subconsulta para contar los likes y otra para saber si el usuario ya dio like.
 $query_questions = "
     SELECT fq.id, fq.title, fq.content, fq.created_at, fq.image,
            u.nombre_completo AS author,
@@ -130,7 +129,7 @@ $result_questions = $mysqli->query($query_questions);
 <head>
     <meta charset="UTF-8">
     <title>Foro de Preguntas y Respuestas</title>
-    <!-- Font Awesome para iconos (corazones) -->
+    <!-- Font Awesome para íconos (corazones) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Enlaces a tus CSS (dashboard y forum) -->
     <link rel="stylesheet" href="../css/dashboard_estudiante.css">
@@ -143,7 +142,7 @@ $result_questions = $mysqli->query($query_questions);
         }
         .back-dashboard-btn {
             display: inline-block;
-            padding: 8px 12px;
+            padding: 10px 15px;
             background: #007BFF;
             color: #fff;
             text-decoration: none;
@@ -196,9 +195,8 @@ $result_questions = $mysqli->query($query_questions);
             line-height: 1.5;
             color: #555;
         }
-        /* Nueva clase para imágenes adjuntas más pequeñas */
         .question-img {
-            max-width: 400px; /* Ajusta este valor según lo que necesites */
+            max-width: 400px;
             height: auto;
             display: inline-block;
             margin: 10px;
@@ -298,7 +296,7 @@ $result_questions = $mysqli->query($query_questions);
 
     <!-- Banner principal -->
     <div class="banner">
-        <img src="../images/banner.png" alt="Banner <?php echo ($user_role=='profesor') ? 'Profesor' : 'Estudiante'; ?>">
+        <img src="../images/banner.png" alt="Banner">
     </div>
 
     <!-- Breadcrumb -->
@@ -344,7 +342,6 @@ $result_questions = $mysqli->query($query_questions);
                         <p><?php echo nl2br(htmlspecialchars($question['content'])); ?></p>
                         <?php if (!empty($question['image'])): ?>
                             <?php 
-                                // Suponemos que se almacenaron múltiples imágenes separadas por comas
                                 $images = explode(",", $question['image']);
                                 foreach ($images as $img): 
                             ?>
@@ -355,7 +352,6 @@ $result_questions = $mysqli->query($query_questions);
                             Publicado por <?php echo htmlspecialchars($question['author']); ?> 
                             el <?php echo $question['created_at']; ?>
                         </p>
-                        <!-- Botón de Like (toggle) usando icono de corazón -->
                         <a href="forum.php?like_question=<?php echo $question['id']; ?>" 
                            class="like-btn <?php echo ($question['liked_by_user'] > 0) ? 'liked' : ''; ?>">
                            <?php if ($question['liked_by_user'] > 0): ?>
@@ -392,8 +388,8 @@ $result_questions = $mysqli->query($query_questions);
                             <p><em>No hay respuestas aún.</em></p>
                         <?php endif; ?>
 
-                        <!-- Formulario para responder (solo profesores) -->
-                        <?php if ($user_role == 'profesor'): ?>
+                        <!-- Formulario para responder (solo profesores y admin pueden responder) -->
+                        <?php if ($user_role == 'profesor' || $user_role == 'admin'): ?>
                             <div class="new-answer">
                                 <form action="forum.php" method="POST">
                                     <input type="hidden" name="action" value="post_answer">
