@@ -114,7 +114,7 @@ $result_enrolled = $mysqli->query($query_enrolled);
     <aside class="left-sidebar">
       <div class="agenda-container">
         <h3>Agenda del Curso</h3>
-        <img src="../images/agenda_icon.png" alt="Icono Agenda" class="agenda-icon">
+        <img src="../images/notas.png" alt="Icono Agenda" class="agenda-icon">
         <p>Aquí se mostrarán fechas y actividades próximas.</p>
       </div>
       <h3>Calendario</h3>
@@ -176,9 +176,9 @@ $result_enrolled = $mysqli->query($query_enrolled);
         <iframe 
           width="100%" 
           height="180" 
-          src="https://www.youtube.com/watch?v=Oh7ffsA54mg" 
+          src="https://www.youtube.com/embed/Oh7ffsA54mg" 
           frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"  
           allowfullscreen>
         </iframe>
       </div>
