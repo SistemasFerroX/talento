@@ -97,7 +97,7 @@ $result_enrolled = $mysqli->query($query_enrolled);
 
   <!-- Banner principal -->
   <div class="banner">
-    <img src="../images/banner.png" alt="Banner Estudiante">
+    <img src="../images/talento1.png" alt="Banner Estudiante">
   </div>
 
   <!-- Breadcrumb -->
@@ -176,7 +176,7 @@ $result_enrolled = $mysqli->query($query_enrolled);
         <iframe 
           width="100%" 
           height="180" 
-          src="https://www.youtube.com/embed/Oh7ffsA54mg" 
+          src="https://www.youtube.com/embed/ejZLVRnL50c" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"  
           allowfullscreen>

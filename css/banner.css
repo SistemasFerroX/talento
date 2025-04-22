@@ -1,14 +1,5 @@
-/* banner.css */
-#banner {
-    width: 100%;
-    height: 120px; /* Ajusta la altura de la franja */
-    overflow: hidden;
-  }
-  
-  #banner img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-  }
-  
+.banner img {
+  width: 100%;         /* Mantiene el ancho */
+  height: 120px;       /* Ajusta este valor a lo que necesites */
+  object-fit: cover;   /* Para que se recorte bien si la imagen es más alta */
+}

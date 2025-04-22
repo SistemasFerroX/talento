@@ -128,12 +128,17 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'admin') {
     .back-btn:hover {
       background: #1e7e34;
     }
+    .banner-profesor img {
+      width: 100%;
+      height: 120px;         /* O ajusta a 100px si lo quieres más pequeño */
+      object-fit: cover;
+}
   </style>
 </head>
 <body>
   <!-- Banner -->
-  <div class="banner">
-    <img src="../images/banner.png" alt="Banner Talento+">
+  <div class="banner banner-profesor">
+    <img src="../images/talento2.png" alt="Banner Talento+">
   </div>
 
   <!-- Encabezado y navegación -->

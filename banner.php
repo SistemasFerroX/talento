@@ -1,4 +1,4 @@
 <!-- banner.php -->
 <header class="banner">
-  <img src="../images/banner.jpg" alt="Banner" class="banner-img">
+  <img src="../images/talento1.png" alt="Banner" class="banner-img">
 </header>

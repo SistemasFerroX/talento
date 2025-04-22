@@ -172,13 +172,19 @@ $courses = $stmtCourses->get_result();
     .course-card a:hover {
       background-color: #0056b3;
     }
+    .banner-profesor img {
+      width: 100%;
+      height: 120px;         /* O ajusta a 100px si lo quieres más pequeño */
+      object-fit: cover;
+    }
+
   </style>
 </head>
 <body>
 
   <!-- Banner completo -->
-  <div class="banner">
-    <img src="../images/banner.png" alt="Banner Talento+">
+  <div class="banner banner-profesor">
+    <img src="../images/talento2.png" alt="Banner Talento+">
   </div>
 
   <!-- Encabezado con saludo y navegación -->
