@@ -1,5 +1,12 @@
-.banner img {
-  width: 100%;         /* Mantiene el ancho */
-  height: 120px;       /* Ajusta este valor a lo que necesites */
-  object-fit: cover;   /* Para que se recorte bien si la imagen es más alta */
+/* Contenedor del banner: ya no recortamos nada */
+#banner {
+  width: 100%;
+  overflow: visible;   /* permitimos que se muestre completo */
+}
+
+/* La imagen del banner se escala al ancho y respeta su proporción */
+#banner img {
+  width: 100%;
+  height: auto;       /* Altura automática: no se recorta */
+  display: block;     /* elimina espacios en línea antes/alrededor */
 }

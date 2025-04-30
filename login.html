@@ -2,26 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login - Plataforma de Cursos</title>
-  <link rel="stylesheet" href="css/banner.css">
+  <title>Iniciar Sesión – Talento+</title>
   <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-  <!-- Banner como franja superior -->
-  <div id="banner">
-    <img src="images/talento1.png" alt="Banner de la Empresa">
-  </div>
-  
-  <!-- Contenedor del formulario de login -->
-  <div class="login-container">
-    <div class="logo">
-      <img src="images/logo.png" alt="Logo de la Empresa">
+
+  <div class="login-split">
+    <!-- Lado izquierdo: imagen -->
+    <div class="login-left"></div>
+
+    <!-- Lado derecho: formulario -->
+    <div class="login-right">
+      <div class="login-box">
+        <img src="images/logo_nuevo.png" alt="Logo Talento+" class="login-logo">
+        <h2 class="login-title">Inicia Sesión</h2>
+        <form action="php/login.php" method="POST" class="login-form">
+          <input type="text" name="cedula" placeholder="Cédula" required>
+          <input type="password" name="password" placeholder="Contraseña" required>
+          <button type="submit">Iniciar Sesión</button>
+        </form>
+        <a href="#" class="login-forgot">Términos de Uso - Política de Privacidad</a>
+      </div>
     </div>
-    <form action="php/login.php" method="POST">
-      <input type="text" name="cedula" placeholder="Cédula" required>
-      <input type="password" name="password" placeholder="Contraseña" required>
-      <button type="submit">Iniciar Sesión</button>
-    </form>
   </div>
+
 </body>
 </html>

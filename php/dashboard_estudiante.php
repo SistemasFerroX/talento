@@ -1,12 +1,4 @@
 <?php
-session_set_cookie_params([
-  'lifetime' => 0,
-  'path'     => '/',
-  'domain'   => '',       // O 'localhost' si lo prefieres
-  'secure'   => false,    // false, porque usas HTTP, no HTTPS
-  'httponly' => true,
-  'samesite' => 'Lax'
-]);
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'estudiante') {
@@ -58,13 +50,11 @@ $result_enrolled = $mysqli->query($query_enrolled);
   <meta charset="UTF-8">
   <title>Dashboard Estudiante</title>
   <link rel="stylesheet" href="../css/dashboard_estudiante.css">
-  <!-- Puedes agregar aquí el CSS necesario para el botón de perfil si aún no lo tienes -->
+  <!-- Botones extra -->
   <style>
-    /* Ejemplo de estilos para el botón "Mi Perfil" */
-    .profile-btn {
+    .profile-btn, .evaluation-btn {
       display: inline-block;
       padding: 8px 12px;
-      background: #007BFF;
       color: #fff;
       text-decoration: none;
       border-radius: 4px;
@@ -72,10 +62,12 @@ $result_enrolled = $mysqli->query($query_enrolled);
       transition: background 0.3s;
       margin-right: 10px;
     }
-    .profile-btn:hover {
-      background: #0056b3;
-    }
+    .profile-btn { background: #007BFF; }
+    .profile-btn:hover { background: #0056b3; }
+    .evaluation-btn { background: #28a745; }
+    .evaluation-btn:hover { background: #1e7e34; }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
@@ -86,12 +78,14 @@ $result_enrolled = $mysqli->query($query_enrolled);
       <span class="site-name">Plataforma de Cursos</span>
     </div>
     <div class="top-bar-right">
-      <span class="username">Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
+      <span class="username">Bienvenido, <?= htmlspecialchars($_SESSION['nombre']) ?></span>
       <!-- Botón de Mi Perfil -->
-      <a href="perfil_estudiante.php" class="profile-btn">Mi Perfil</a>
+      <a href="perfil_estudiante.php" class="profile-btn"><i class="fa fa-user-circle"></i> Mi Perfil</a>
+      <!-- Nuevo Botón Evaluaciones -->
+      <a href="evaluaciones.php" class="evaluation-btn"><i class="fa fa-check-square-o"></i> Evaluaciones</a>
       <!-- Botón para acceder al Foro -->
-      <a href="forum.php" class="forum-btn">Foro</a>
-      <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
+      <a href="forum.php" class="forum-btn"><i class="fa fa-comments"></i> Foro</a>
+      <a href="logout.php" class="logout-btn"><i class="fa fa-sign-out"></i> Cerrar Sesión</a>
     </div>
   </header>
 
@@ -133,9 +127,9 @@ $result_enrolled = $mysqli->query($query_enrolled);
           <div class="course-grid">
             <?php while ($course = $result_available->fetch_assoc()): ?>
               <div class="course-card">
-                <h3><?php echo htmlspecialchars($course['nombre']); ?></h3>
-                <p><?php echo htmlspecialchars($course['descripcion']); ?></p>
-                <a href="course_detail.php?course_id=<?php echo $course['id']; ?>" class="action-btn">Inscribirse</a>
+                <h3><?= htmlspecialchars($course['nombre']) ?></h3>
+                <p><?= htmlspecialchars($course['descripcion']) ?></p>
+                <a href="course_detail.php?course_id=<?= $course['id'] ?>" class="action-btn">Inscribirse</a>
               </div>
             <?php endwhile; ?>
           </div>
@@ -144,7 +138,7 @@ $result_enrolled = $mysqli->query($query_enrolled);
         <?php endif; ?>
       </section>
 
-      <!-- Sección de cursos inscritos (solo los que aún no están aprobados) -->
+      <!-- Sección de cursos inscritos -->
       <section class="section-courses">
         <h2>Mis Cursos</h2>
         <?php if ($result_enrolled && $result_enrolled->num_rows > 0): ?>
@@ -155,10 +149,10 @@ $result_enrolled = $mysqli->query($query_enrolled);
                 $buttonText = is_null($cal) ? "Acceder" : "Repetir";
               ?>
               <div class="course-card enrolled">
-                <h3><?php echo htmlspecialchars($course['nombre']); ?></h3>
-                <p><?php echo htmlspecialchars($course['descripcion']); ?></p>
-                <a href="course_content.php?course_id=<?php echo $course['id']; ?>" class="btn-acceder">
-                  <?php echo $buttonText; ?>
+                <h3><?= htmlspecialchars($course['nombre']) ?></h3>
+                <p><?= htmlspecialchars($course['descripcion']) ?></p>
+                <a href="course_content.php?course_id=<?= $course['id'] ?>" class="btn-acceder">
+                  <?= $buttonText ?>
                 </a>
               </div>
             <?php endwhile; ?>
