@@ -4,7 +4,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 error_reporting(E_ALL);
 
-// 1) Sesión segura
+/* 1) Sesión segura */
 session_set_cookie_params([
     'lifetime' => 0,
     'path'     => '/',
@@ -15,18 +15,25 @@ session_set_cookie_params([
 ]);
 session_start();
 
-// 2) Conexión
+/* 2) Conexión */
 require 'config.php';
 
-// 3) Procesar login
+/* 3) Procesar login */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cedula   = $mysqli->real_escape_string($_POST['cedula']);
     $password = $_POST['password'];
 
-    $sql = "SELECT id, nombre_completo, password, rol, empresa
-            FROM users
-            WHERE cedula = '$cedula'
-            LIMIT 1";
+    /*  ─── AÑADIMOS apellidos y foto ─── */
+    $sql = "SELECT id,
+                   nombre_completo,
+                   apellidos,
+                   password,
+                   rol,
+                   empresa,
+                   foto
+            FROM   users
+            WHERE  cedula = '$cedula'
+            LIMIT  1";
     $res = $mysqli->query($sql);
     if (!$res) {
         error_log("MySQL error: " . $mysqli->error);
@@ -36,13 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($res->num_rows === 1) {
         $user = $res->fetch_assoc();
         if (password_verify($password, $user['password'])) {
-            // Guardar en sesión
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['nombre']  = $user['nombre_completo'];
-            $_SESSION['rol']     = $user['rol'];
-            $_SESSION['empresa'] = $user['empresa'];
 
-            // Redirigir según rol
+            /* ─ Guardamos todo en sesión ─ */
+            $_SESSION['user_id']   = $user['id'];
+            $_SESSION['nombre']    = $user['nombre_completo'];
+            $_SESSION['apellidos'] = $user['apellidos'];   // NUEVO
+            $_SESSION['foto']      = $user['foto'];        // NUEVO
+            $_SESSION['rol']       = $user['rol'];
+            $_SESSION['empresa']   = $user['empresa'];
+
+            /* Redirigimos según rol */
             if ($user['rol'] === 'admin') {
                 header("Location: ../php/dashboard_admin.php");
             } elseif ($user['rol'] === 'profesor') {
@@ -62,10 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Si hubo error, lo mostramos y detenemos
+/* 4) Mostrar error si lo hay */
 if (!empty($error)) {
     echo "<p style='color:red; text-align:center; margin-top:20px;'>$error</p>";
     exit;
 }
-
 ob_end_flush();

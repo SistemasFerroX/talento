@@ -1,313 +1,195 @@
-/* Reset básico */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ——— RESET ——— */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f5f5;
+  color:#333;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  color: #333;
+/* ——— 1) BARRA SUPERIOR ——— */
+.top-bar{
+  display:flex;
+  justify-content:flex-start;        /* logo a la izquierda               */
+  align-items:center;
+  background:#0066CC;
+  height:60px;
+  padding:0 20px;
+  position:relative;           /* ← NUEVO (para centrar con absoluto) */
 }
 
-/* Barra superior */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #003366; /* color principal */
-  color: #fff;
-  padding: 10px 20px;
+/* Logo */
+.top-bar-left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.logo{height:38px;}
+
+/* ——— Eslogan centrado ——— */
+.slogan{
+  position:absolute;           /* centra con left:50% / transform     */
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;                  /* blanco                              */
+  font-family:"Roboto",Arial,Helvetica,sans-serif;
+  font-weight:500;
+  font-size:18px;
+  pointer-events:none;
+  white-space:nowrap;
 }
 
-.top-bar-left {
-  display: flex;
-  align-items: center;
+/* Usuario (avatar + nombre + menú) */
+.top-bar-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  position:relative;
+  margin-left:auto;
+}
+.avatar{
+  width:32px;height:32px;
+  border-radius:50%;
+  object-fit:cover;
+}
+.username{
+  color:#fff;
+  font-weight:500;
+  text-transform:capitalize;
+}
+.toggle-menu{display:none;}
+.hamburger{
+  background:none;border:none;
+  color:#fff;font-size:20px;cursor:pointer;
 }
 
-.logo {
-  height: 40px;
-  margin-right: 10px;
+/* Menú deslizable */
+.slide-menu{
+  display:none;
+  position:absolute;right:0;top:60px;
+  width:220px;
+  background:#fff;
+  border-radius:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  z-index:20;
+}
+.toggle-menu:checked ~ .slide-menu{display:block;}
+
+.slide-menu ul{list-style:none;margin:0;padding:0;}
+.slide-menu li{border-bottom:1px solid #eee;}
+.slide-menu li.divider{border-bottom:none;margin:6px 0;}
+
+.menu-header{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-bottom:1px solid #eee;
+}
+.avatar-sm{
+  width:48px;height:48px;border-radius:50%;object-fit:cover;
+}
+.menu-header strong{
+  font-size:12px;color:#6a6565;
+  white-space:nowrap;text-transform:capitalize;
+}
+.slide-menu a{
+  display:block;padding:8px 16px;
+  font-size:14px;color:#333;text-decoration:none;
+}
+.slide-menu a:hover{background:#f5f5f5;}
+.slide-menu a i{margin-right:6px;}
+
+/* Mis Cursos centrado y azul */
+.mis-cursos-link{
+  text-align:center !important;
+  color:#0066CC !important;
+  font-weight:600;
 }
 
-.site-name {
-  font-size: 18px;
-  font-weight: bold;
+/* Iconos blancos en la barra y menú */
+.top-bar .fa,
+.slide-menu .fa{
+  color:#fff;
 }
 
-.top-bar-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+/* ——— 2) BANNER ——— */
+.banner img{
+  width:100%;
+  max-height:500px;
+  object-fit:cover;
+  display:block;
+  border-radius:0 0 8px 8px;
 }
 
-.username {
-  font-size: 14px;
-  font-weight: 500;
+/* ——— 3) BREADCRUMB ——— */
+.breadcrumb{
+  background:#e9ecef;padding:8px 20px;
+}
+.breadcrumb ul{
+  display:flex;gap:5px;align-items:center;
+  list-style:none;
+}
+.breadcrumb li{font-size:14px;color:#555;}
+.breadcrumb li+li::before{
+  content:'>';margin:0 5px;color:#888;
+}
+.breadcrumb a{color:#007bff;text-decoration:none;}
+.breadcrumb a:hover{text-decoration:underline;}
+
+/* ——— 4) CONTENEDOR PRINCIPAL (una columna) ——— */
+.layout-container{
+  display:grid;
+  grid-template-columns:1fr;
+  margin:20px;
 }
 
-.logout-btn {
-  color: #fff;
-  text-decoration: none;
-  font-size: 14px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  background: #00509e;
-  transition: background 0.3s;
+/* Contenido central */
+.main-content{
+  background:#fff;
+  border-radius:8px;
+  padding:24px;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 
-.logout-btn:hover {
-  background: #003e7e;
+/* ——— TARJETAS DE CURSO CON PORTADA ——— */
+.course-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:20px;
+}
+.course-thumb{
+  position:relative;
+  height:130px;
+  border-radius:8px;
+  overflow:hidden;
+  display:flex;align-items:flex-end;
+  text-decoration:none;
+  box-shadow:0 2px 6px rgba(0,0,0,.15);
+  background-size:cover;
+  background-position:center;
+  transition:transform .2s;
+}
+.course-thumb::before{
+  content:"";
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.45);
+}
+.course-thumb span{
+  position:relative;
+  width:100%;
+  text-align:center;
+  color:#fff;
+  font-weight:600;
+  font-size:14px;
+  padding:6px 4px;
+}
+.course-thumb:hover{transform:translateY(-4px);}
+
+/* ——— Estilo del título de la sección ——— */
+.section-courses h2{
+  color:#044f9a;        /* azul corporativo */
+  text-align:center;    /* centrado         */
+  margin-bottom:24px;   /* deja algo de aire debajo (opcional) */
 }
 
-/* Banner */
-.banner img {
-  width: 100%;
-  max-height: 150px; /* Ajusta la altura del banner */
-  object-fit: cover;
-  display: block;
-}
-
-/* Breadcrumb */
-.breadcrumb {
-  background: #e9ecef;
-  padding: 8px 20px;
-}
-
-.breadcrumb ul {
-  list-style: none;
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-
-.breadcrumb li a {
-  color: #007BFF;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.breadcrumb li a:hover {
-  text-decoration: underline;
-}
-
-.breadcrumb li {
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-}
-
-.breadcrumb li::after {
-  content: ">";
-  margin: 0 5px;
-}
-
-.breadcrumb li:last-child::after {
-  content: "";
-}
-
-/* Layout principal con 3 columnas (Grid) */
-.layout-container {
-  display: grid;
-  grid-template-columns: 250px 1fr 300px; /* Columna izq, central y der */
-  gap: 20px;
-  width: 100%;
-  margin: 20px 0;
-  padding: 0 10px;
-  box-sizing: border-box;
-}
-
-/* Columna izquierda (Agenda + Calendario) */
-.left-sidebar {
-  background: #fff;
-  border-radius: 6px;
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.left-sidebar h3 {
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #003366;
-}
-
-.agenda-container {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.agenda-icon {
-  width: 60px;
-  margin-bottom: 10px;
-}
-
-/* Columna central (Cursos) */
-.main-content {
-  background: #fff;
-  border-radius: 6px;
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.section-courses {
-  margin-bottom: 40px;
-}
-
-.section-courses h2 {
-  margin-bottom: 15px;
-  font-size: 20px;
-  color: #003366;
-}
-
-/* Grid de cursos (Tarjetas mejoradas) */
-.course-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  margin: 20px 0;
-}
-
-/* Tarjeta individual del curso */
-.course-card {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.course-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-.course-card h3 {
-  margin-bottom: 10px;
-  font-size: 18px;
-  color: #333;
-}
-
-.course-card p {
-  flex: 1;
-  margin-bottom: 10px;
-  color: #555;
-}
-
-/* Botones de acción */
-/* Botón para cursos disponibles (Inscribirse) */
-.action-btn,
-.action-btn:link,
-.action-btn:visited {
-  display: inline-block !important;
-  text-align: center;
-  padding: 12px 20px !important;
-  border-radius: 6px !important;
-  background: #28a745 !important;  /* Verde */
-  color: #fff !important;
-  text-decoration: none !important;
-  font-weight: 600 !important;
-  transition: background 0.3s !important;
-}
-
-.action-btn:hover {
-  background: #218838 !important;
-}
-
-/* También se mantienen los estilos para otros botones */
-.btn-acceder {
-  display: inline-block;
-  text-align: center;
-  padding: 8px 12px;
-  border-radius: 4px;
-  background: #007BFF; /* Azul */
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-  transition: background 0.3s;
-}
-
-.btn-acceder:hover {
-  background: #0056b3;
-}
-
-/* Estilo para tarjetas de curso ya inscrito */
-.course-card.enrolled {
-  border-left: 4px solid #007BFF;
-}
-
-/* Columna derecha (Noticias) */
-.right-sidebar {
-  background: #fff;
-  border-radius: 6px;
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.right-sidebar h3 {
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #003366;
-}
-
-.video-container {
-  margin-bottom: 15px;
-}
-
-/* Botón para ver cursos realizados y calificación */
-.btn-evaluacion {
-  display: inline-block;
-  padding: 10px 15px;
-  background: #007BFF;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 4px;
-  margin-top: 10px;
-  transition: background 0.3s;
-}
-
-.btn-evaluacion:hover {
-  background: #0056b3;
-}
-
-.forum-btn {
-  display: inline-block;
-  padding: 8px 12px;
-  background: #28a745;  /* Color verde, ajústalo si lo deseas */
-  color: #fff;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: 600;
-  transition: background 0.3s;
-  margin-right: 10px;
-}
-
-.forum-btn:hover {
-  background: #218838;
-}
-
-/* Botón "Mi Perfil" - Ajuste para que se vea consistente */
-.profile-btn,
-.profile-btn:link,
-.profile-btn:visited {
-  display: inline-block;
-  padding: 8px 12px;
-  background: #17a2b8;  /* Color cian, cámbialo según tu preferencia */
-  color: #fff;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: 600;
-  transition: background 0.3s;
-  margin-right: 10px;
-}
-
-.profile-btn:hover,
-.profile-btn:active {
-  background: #138496;
-  color: #fff;
-  text-decoration: none;
+/* ——— RESPONSIVE ——— */
+@media(max-width:600px){
+  .course-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
 }
