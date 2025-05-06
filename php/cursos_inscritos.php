@@ -69,13 +69,13 @@ $cursos = $mysqli->query($sql);
         </li>
 
         <!-- NUEVA opción Home -->
-        <li><a href="dashboard_estudiante.php"><i class="fa fa-home"></i> Home</a></li>
+        <li><a href="dashboard_estudiante.php"><i class="fa fa-home" style="color:#000;"></i> Home</a></li>
 
         <!-- Enlace a esta misma página (facultativo) -->
-        <li><a href="cursos_inscritos.php"><i class="fa fa-graduation-cap"></i> Mis Cursos</a></li>
+        <li><a href="cursos_inscritos.php"><i class="fa fa-graduation-cap" style="color:#000;"></i> Mis Cursos</a></li>
 
         <li class="divider"></li>
-        <li><a href="logout.php"><i class="fa fa-sign-out"></i> Cerrar Sesión</a></li>
+        <li><a href="logout.php"><i class="fa fa-sign-out" style="color:#000;"></i> Cerrar Sesión</a></li>
       </ul>
     </nav>
   </div>

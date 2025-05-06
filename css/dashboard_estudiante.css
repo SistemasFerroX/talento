@@ -1,195 +1,89 @@
 /* ——— RESET ——— */
 *{margin:0;padding:0;box-sizing:border-box;}
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f5f5f5;
-  color:#333;
-}
+body{font-family:Arial,Helvetica,sans-serif;background:#f5f5f5;color:#333;}
 
 /* ——— 1) BARRA SUPERIOR ——— */
 .top-bar{
-  display:flex;
-  justify-content:flex-start;        /* logo a la izquierda               */
-  align-items:center;
-  background:#0066CC;
-  height:60px;
-  padding:0 20px;
-  position:relative;           /* ← NUEVO (para centrar con absoluto) */
+  display:flex;justify-content:flex-start;align-items:center;
+  background:#0066CC;height:60px;padding:0 20px;position:relative;
 }
-
-/* Logo */
-.top-bar-left{
-  display:flex;
-  align-items:center;
-  gap:18px;
-}
+/* logo */
+.top-bar-left{display:flex;align-items:center;gap:18px;}
 .logo{height:38px;}
-
-/* ——— Eslogan centrado ——— */
+/* eslogan */
 .slogan{
-  position:absolute;           /* centra con left:50% / transform     */
-  left:50%;
-  transform:translateX(-50%);
-  color:#fff;                  /* blanco                              */
-  font-family:"Roboto",Arial,Helvetica,sans-serif;
-  font-weight:500;
-  font-size:18px;
-  pointer-events:none;
-  white-space:nowrap;
+  position:absolute;left:50%;transform:translateX(-50%);
+  color:#fff;font-family:"Roboto",Arial,Helvetica,sans-serif;
+  font-weight:500;font-size:18px;white-space:nowrap;pointer-events:none;
 }
-
-/* Usuario (avatar + nombre + menú) */
-.top-bar-right{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  position:relative;
-  margin-left:auto;
-}
-.avatar{
-  width:32px;height:32px;
-  border-radius:50%;
-  object-fit:cover;
-}
-.username{
-  color:#fff;
-  font-weight:500;
-  text-transform:capitalize;
-}
+/* usuario */
+.top-bar-right{display:flex;align-items:center;gap:8px;position:relative;margin-left:auto;}
+.avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;}
+.username{color:#fff;font-weight:500;text-transform:capitalize;}
 .toggle-menu{display:none;}
-.hamburger{
-  background:none;border:none;
-  color:#fff;font-size:20px;cursor:pointer;
-}
+.hamburger{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;}
 
-/* Menú deslizable */
+/* — menu deslizable — */
 .slide-menu{
-  display:none;
-  position:absolute;right:0;top:60px;
-  width:220px;
-  background:#fff;
-  border-radius:6px;
-  box-shadow:0 4px 12px rgba(0,0,0,.15);
-  z-index:20;
+  display:none;position:absolute;right:0;top:60px;width:220px;
+  background:#fff;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:20;
 }
-.toggle-menu:checked ~ .slide-menu{display:block;}
-
+.toggle-menu:checked~.slide-menu{display:block;}
 .slide-menu ul{list-style:none;margin:0;padding:0;}
 .slide-menu li{border-bottom:1px solid #eee;}
 .slide-menu li.divider{border-bottom:none;margin:6px 0;}
-
-.menu-header{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 16px;border-bottom:1px solid #eee;
-}
-.avatar-sm{
-  width:48px;height:48px;border-radius:50%;object-fit:cover;
-}
-.menu-header strong{
-  font-size:12px;color:#6a6565;
-  white-space:nowrap;text-transform:capitalize;
-}
-.slide-menu a{
-  display:block;padding:8px 16px;
-  font-size:14px;color:#333;text-decoration:none;
-}
+.menu-header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #eee;}
+.avatar-sm{width:48px;height:48px;border-radius:50%;object-fit:cover;}
+.menu-header strong{font-size:12px;color:#6a6565;text-transform:capitalize;white-space:nowrap;}
+.slide-menu a{display:block;padding:8px 16px;font-size:14px;color:#333;text-decoration:none;}
 .slide-menu a:hover{background:#f5f5f5;}
 .slide-menu a i{margin-right:6px;}
+/* enlace Mis Cursos centrado y azul */
+.mis-cursos-link{text-align:center!important;color:#0066CC!important;font-weight:600;}
+/* iconos blancos en barra y menú */
+.top-bar .fa,.slide-menu .fa{color:#fff;}
 
-/* Mis Cursos centrado y azul */
-.mis-cursos-link{
-  text-align:center !important;
-  color:#0066CC !important;
-  font-weight:600;
+/* ——— 2) BANNER SLIDER ——— */
+.banner-slider{
+  position:relative;width:100%;height:500px !important;
+  overflow:hidden;border-radius:0 0 8px 8px;
 }
-
-/* Iconos blancos en la barra y menú */
-.top-bar .fa,
-.slide-menu .fa{
-  color:#fff;
-}
-
-/* ——— 2) BANNER ——— */
-.banner img{
-  width:100%;
-  max-height:500px;
-  object-fit:cover;
-  display:block;
-  border-radius:0 0 8px 8px;
+.banner-slider img{
+  width:100%;height:100%;object-fit:cover;transition:opacity .4s ease;
 }
 
 /* ——— 3) BREADCRUMB ——— */
-.breadcrumb{
-  background:#e9ecef;padding:8px 20px;
-}
-.breadcrumb ul{
-  display:flex;gap:5px;align-items:center;
-  list-style:none;
-}
+.breadcrumb{background:#e9ecef;padding:8px 20px;}
+.breadcrumb ul{display:flex;gap:5px;align-items:center;list-style:none;}
 .breadcrumb li{font-size:14px;color:#555;}
-.breadcrumb li+li::before{
-  content:'>';margin:0 5px;color:#888;
-}
+.breadcrumb li+li::before{content:'>';margin:0 5px;color:#888;}
 .breadcrumb a{color:#007bff;text-decoration:none;}
 .breadcrumb a:hover{text-decoration:underline;}
 
-/* ——— 4) CONTENEDOR PRINCIPAL (una columna) ——— */
-.layout-container{
-  display:grid;
-  grid-template-columns:1fr;
-  margin:20px;
-}
+/* ——— 4) CONTENEDOR PRINCIPAL ——— */
+.layout-container{display:grid;grid-template-columns:1fr;margin:20px;}
+.main-content{background:#fff;border-radius:8px;padding:24px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
 
-/* Contenido central */
-.main-content{
-  background:#fff;
-  border-radius:8px;
-  padding:24px;
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
-}
+/* título “Cursos Disponibles” centrado y azul */
+.section-courses h2{color:#044f9a;text-align:center;margin-bottom:24px;}
 
-/* ——— TARJETAS DE CURSO CON PORTADA ——— */
-.course-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:20px;
-}
+/* ——— GRID de cursos ——— */
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px;}
 .course-thumb{
-  position:relative;
-  height:130px;
-  border-radius:8px;
-  overflow:hidden;
-  display:flex;align-items:flex-end;
-  text-decoration:none;
+  position:relative;height:130px;border-radius:8px;overflow:hidden;
+  display:flex;align-items:flex-end;text-decoration:none;
   box-shadow:0 2px 6px rgba(0,0,0,.15);
-  background-size:cover;
-  background-position:center;
-  transition:transform .2s;
+  background-size:cover;background-position:center;transition:transform .2s;
 }
-.course-thumb::before{
-  content:"";
-  position:absolute;inset:0;
-  background:rgba(0,0,0,.45);
-}
+.course-thumb::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45);}
 .course-thumb span{
-  position:relative;
-  width:100%;
-  text-align:center;
-  color:#fff;
-  font-weight:600;
-  font-size:14px;
-  padding:6px 4px;
+  position:relative;width:100%;text-align:center;color:#fff;
+  font-weight:600;font-size:14px;padding:6px 4px;
 }
 .course-thumb:hover{transform:translateY(-4px);}
 
-/* ——— Estilo del título de la sección ——— */
-.section-courses h2{
-  color:#044f9a;        /* azul corporativo */
-  text-align:center;    /* centrado         */
-  margin-bottom:24px;   /* deja algo de aire debajo (opcional) */
-}
-
 /* ——— RESPONSIVE ——— */
-@media(max-width:600px){
+@media (max-width:600px){
   .course-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+  .banner-slider{height:300px !important;}
 }

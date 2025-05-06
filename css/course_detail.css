@@ -1,97 +1,110 @@
-/* Reset y estilos base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Roboto', sans-serif;
-    background: #f5f5f5;
-    color: #333;
-    padding: 20px;
-  }
-  
-  /* Título principal */
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 28px;
-    color: #003366;
-  }
-  
-  /* Información del curso */
-  .course-info {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-  }
-  
-  .course-info h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: #003366;
-  }
-  
-  .course-info p {
-    font-size: 16px;
-    line-height: 1.5;
-  }
-  
-  /* Sección de materiales (documentos y videos) */
-  .materials {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-  }
-  
-  .materials h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: #003366;
-  }
-  
-  .materials ul {
-    list-style: none;
-    margin-left: 0;
-    padding-left: 0;
-  }
-  
-  .materials li {
-    margin-bottom: 8px;
-    font-size: 16px;
-  }
-  
-  .materials a {
-    color: #007BFF;
-    text-decoration: none;
-  }
-  
-  .materials a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Botón para confirmar inscripción */
-  .btn-confirm {
-    display: block;
-    width: 100%;
-    max-width: 300px;
-    margin: 20px auto;
-    text-align: center;
-    background: #007BFF;
-    color: #fff;
-    padding: 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 18px;
-    transition: background 0.3s ease;
-  }
-  
-  .btn-confirm:hover {
-    background: #0056b3;
-  }
-  
+/* ———  FUENTE  ——— */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Roboto',Arial,Helvetica,sans-serif;
+    background:#fff;
+    color:#333;
+}
+
+/* ———  BARRA SUPERIOR ——— */
+.top-bar{
+    display:flex;align-items:center;gap:30px;
+    background:#0066CC;height:60px;padding:0 24px;position:relative
+}
+
+/* --- eslogan centrado en la barra --- */
+.slogan{
+  position:absolute;          /* centrado absoluto */
+  left:50%; transform:translateX(-50%);
+  color:#fff;                 /* blanco */
+  font-family:"Roboto",Arial,Helvetica,sans-serif;
+  font-weight:500;
+  font-size:18px;
+  white-space:nowrap;
+  pointer-events:none;        /* que no intercepte clics */
+}
+
+/* aseguramos que la barra sea position:relative (si no lo era) */
+.top-bar{position:relative;}
+
+/* si necesitas un poco de espacio a los lados en móviles */
+@media(max-width:600px){
+  .slogan{font-size:15px;}
+}
+
+.logo{height:34px}
+.categories-dropdown{color:#fff;font-weight:500;cursor:pointer;position:relative}
+.categories-dropdown i{font-size:.75rem;margin-left:4px}
+.categories-menu{
+    display:none;position:absolute;top:140%;left:0;background:#fff;border-radius:6px;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);min-width:160px
+}
+.categories-dropdown:hover .categories-menu{display:block}
+.categories-menu a{display:block;padding:8px 12px;color:#333;text-decoration:none;font-size:14px}
+.categories-menu a:hover{background:#f2f2f2}
+
+.top-bar-right{margin-left:auto;display:flex;align-items:center;gap:8px;position:relative}
+.avatar{width:32px;height:32px;border-radius:50%;object-fit:cover}
+.username{color:#fff;text-transform:capitalize;font-weight:500}
+.hamburger{background:none;border:none;color:#fff;font-size:20px;cursor:pointer}
+.toggle-menu{display:none}
+.slide-menu{
+    display:none;position:absolute;right:0;top:60px;width:220px;background:#fff;border-radius:6px;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:20
+}
+.toggle-menu:checked~.slide-menu{display:block}
+.slide-menu ul{list-style:none}
+.slide-menu li{border-bottom:1px solid #eee}
+.slide-menu li.divider{border-bottom:none;margin:6px 0}
+.menu-header{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.avatar-sm{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.menu-header strong{font-size:13px;text-transform:capitalize;color:#006}
+.slide-menu a{display:block;padding:8px 16px;color:#333;font-size:14px;text-decoration:none}
+.slide-menu a:hover{background:#f5f5f5}
+.slide-menu a i{margin-right:6px}
+.mis-cursos-link{text-align:center!important;color:#0066CC!important;font-weight:600}
+
+/* ———  CONTENIDO ——— */
+.wrapper{max-width:1100px;margin:32px auto;padding:0 20px}
+.back-link{display:inline-flex;align-items:center;gap:4px;color:#666;font-size:14px;text-decoration:none;margin-bottom:24px}
+.back-link:hover{text-decoration:underline}
+
+/* HERO */
+.hero{
+    display:grid;grid-template-columns:1fr 430px;gap:40px;align-items:flex-start
+}
+.hero-text h1{font-size:42px;color:#064f9a;margin-bottom:10px}
+.short-desc{max-width:420px;line-height:1.5;margin-bottom:14px}
+.cta-intro{font-weight:700;margin-bottom:18px}
+.cta-btn{
+    display:inline-block;background:#0066CC;color:#fff;padding:12px 28px;border-radius:6px;
+    font-weight:600;text-decoration:none;transition:background .2s
+}
+.cta-btn:hover{background:#045ab0}
+
+.hero-media iframe{
+    width:100%;height:260px;border:none;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.12)
+}
+
+/* SOBRE EL CURSO */
+.about-course{margin-top:60px}
+.about-course h2{font-size:24px;color:#064f9a;margin-bottom:20px}
+.course-description{line-height:1.6;margin-bottom:28px}
+.materials h3{font-size:18px;color:#064f9a;margin:18px 0 10px}
+.materials ul{list-style:none;padding-left:0}
+.materials li{margin-bottom:6px}
+.materials a{color:#0066CC;text-decoration:none;font-size:15px}
+.materials a:hover{text-decoration:underline}
+.materials i{margin-right:6px;color:#888}
+
+/* ———  RESPONSIVE ——— */
+@media(max-width:900px){
+    .hero{grid-template-columns:1fr}
+    .hero-media iframe{height:220px;margin-top:24px}
+}
+@media(max-width:560px){
+    .hero-text h1{font-size:32px}
+    .cta-btn{width:100%;text-align:center}
+}

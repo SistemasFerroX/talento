@@ -11,14 +11,14 @@ require 'config.php';
 $student_id = $_SESSION['user_id'];
 $empresa    = $mysqli->real_escape_string($_SESSION['empresa']);
 
-/* foto de perfil */
+/* foto de perfil ---------------------------------------------------- */
 $fotoFile = $_SESSION['foto'] ?? '';
 $fotoDisk = __DIR__.'/../uploads/'.$fotoFile;
 $fotoURL  = ($fotoFile && file_exists($fotoDisk))
             ? '../uploads/'.rawurlencode($fotoFile)
             : '../images/default-avatar.png';
 
-/* cursos disponibles (no inscritos) */
+/* cursos disponibles (no inscritos) --------------------------------- */
 $sql = "
   SELECT id,nombre,descripcion,portada
     FROM courses
@@ -35,34 +35,31 @@ $cursos = $mysqli->query($sql);
   <title>Dashboard Estudiante</title>
 
   <link rel="stylesheet" href="../css/dashboard_estudiante.css">
-  <!-- Font Awesome 6 -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- ───────────–  BARRA SUPERIOR  –─────────── -->
+<!-- ═══════════ BARRA SUPERIOR ═══════════ -->
 <header class="top-bar">
-  <!-- logo -->
+  <!-- Logo -->
   <div class="top-bar-left">
     <a href="dashboard_estudiante.php" class="logo-link">
       <img src="../images/logo_nuevo_blanco.png" class="logo" alt="Logo">
     </a>
   </div>
 
-  <!-- eslogan centrado -->
+  <!-- Eslogan -->
   <div class="slogan">Avanza con propósito, crece con&nbsp;visión</div>
 
-  <!-- bloque usuario -->
+  <!-- Usuario -->
   <div class="top-bar-right">
     <img src="<?= htmlspecialchars($fotoURL) ?>" class="avatar" alt="Perfil">
     <span class="username"><?= htmlspecialchars($_SESSION['nombre']) ?></span>
 
     <input type="checkbox" id="toggleMenu" class="toggle-menu">
-    <label for="toggleMenu" class="hamburger">
-      <i class="fa-solid fa-bars"></i>
-    </label>
+    <label for="toggleMenu" class="hamburger"><i class="fa-solid fa-bars"></i></label>
 
     <nav class="slide-menu">
       <ul>
@@ -72,7 +69,7 @@ $cursos = $mysqli->query($sql);
         </li>
 
         <li><a href="perfil_estudiante.php"><i class="fa-regular fa-user"></i> Mi Perfil</a></li>
-        <li><a href="cursos_inscritos.php" class="mis-cursos-link">Mis Cursos</a></li>
+        <li><a href="cursos_inscritos.php"><i class="fa fa-graduation-cap" style="color:#000;"></i> Mis Cursos</a></li>
         <li><a href="cursos_realizados.php"><i class="fa-solid fa-clipboard-check"></i> Cursos Realizados</a></li>
 
         <li class="divider"></li>
@@ -82,15 +79,15 @@ $cursos = $mysqli->query($sql);
   </div>
 </header>
 
-<!-- banner -->
-<div class="banner">
-  <img src="../images/RECURSOS_BANNER1.png" alt="Banner Estudiante">
+<!-- ═══════════ BANNER (slider) ═══════════ -->
+<div class="banner-slider">
+  <img id="bannerImg" src="../images/RECURSOS_BANNER1.png" alt="Banner">
 </div>
 
-<!-- breadcrumb (vacío, solo la franja gris) -->
+<!-- Breadcrumb (solo franja gris) -->
 <nav class="breadcrumb"><ul><li>&nbsp;</li></ul></nav>
 
-<!-- ───────– CONTENIDO PRINCIPAL –──────── -->
+<!-- ═══════════ CONTENIDO ═══════════ -->
 <main class="layout-container" style="grid-template-columns:1fr;">
   <div class="main-content">
     <section class="section-courses">
@@ -117,5 +114,20 @@ $cursos = $mysqli->query($sql);
     </section>
   </div>
 </main>
+
+<!-- Slider script (4 imágenes · 6 s) -->
+<script>
+const slides=["../images/RECURSOS_BANNER1.png",
+              "../images/RECURSOS_BANNER2.png",
+              "../images/RECURSOS_BANNER3.png",
+              "../images/RECURSOS_BANNER4.png"];
+let idx=0;
+const img=document.getElementById("bannerImg");
+setInterval(()=>{
+  idx=(idx+1)%slides.length;
+  img.style.opacity=0;
+  setTimeout(()=>{img.src=slides[idx];img.style.opacity=1;},400);
+},6000);
+</script>
 </body>
 </html>
