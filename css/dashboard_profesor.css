@@ -1,196 +1,124 @@
-/* Reseteo básico */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+ /* ===== RESET ===== */
+ *{margin:0;padding:0;box-sizing:border-box;}
+ body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#333;}
+ 
+ /* ===== COLORES ===== */
+ :root{
+   --blue:#0055AE;     /* azul corporativo profesor */
+   --grey:#E5E8EC;     /* barra superior */
+ }
+ 
+ /* ===== BARRA SUPERIOR ===== */
+ .top-bar{
+   display:flex;align-items:center;justify-content:flex-start;
+   background:var(--grey);height:60px;padding:0 20px;position:relative;
+ }
+ .top-bar-left{display:flex;align-items:center;gap:18px;}
+ .logo{height:200px;}
+ 
+ .slogan{
+   position:absolute;left:50%;transform:translateX(-50%);
+   color:var(--blue);font-family:"Roboto",Arial,Helvetica,sans-serif;
+   font-weight:500;font-size:18px;white-space:nowrap;
+ }
+ .top-bar-right{margin-left:auto;display:flex;align-items:center;gap:8px;position:relative;}
+ .avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;}
+ .username{color:var(--blue);font-weight:500;text-transform:capitalize;}
+ .toggle-menu{display:none;}
+ .hamburger{background:none;border:none;color:var(--blue);font-size:20px;cursor:pointer;}
+ 
+ .slide-menu{
+   display:none;position:absolute;right:0;top:60px;width:220px;
+   background:#fff;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:20;
+ }
+ .toggle-menu:checked~.slide-menu{display:block;}
+ .slide-menu ul{list-style:none;margin:0;padding:0;}
+ .slide-menu li{border-bottom:1px solid #eee;}
+ .slide-menu li.divider{border-bottom:none;margin:6px 0;}
+ .menu-header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #eee;}
+ .avatar-sm{width:48px;height:48px;border-radius:50%;object-fit:cover;}
+ .menu-header strong{font-size:12px;color:#6a6565;text-transform:capitalize;}
+ .slide-menu a{display:block;padding:8px 16px;font-size:14px;color:#333;text-decoration:none;}
+ .slide-menu a:hover{background:#f5f5f5;}
+ .slide-menu a i{margin-right:6px;color:var(--blue);}
+ .top-bar .fa{color:var(--blue);}
+ 
+ /* ===== BANNER ===== */
+ .banner-slider{position:relative;width:100%;height:500px;overflow:hidden;}
+ .banner-slider img{width:100%;height:100%;object-fit:cover;transition:opacity .4s ease;}
+ 
+ /* ===== RESPONSIVE ===== */
+ @media(max-width:600px){
+   .banner-slider{height:220px;}
+   .slogan{font-size:14px;}
+ }
+ /* ===== MIS CURSOS ===== */
+.course-list{
+  padding:40px 22px;
+}
+.course-list h2{
+  color:var(--blue);
+  font-size:28px;
+  margin-bottom:24px;
+  text-align:center;
 }
 
-/* Base */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f8f9fa;
-  color: #333;
-  margin: 0;
-  padding: 0;
+.course-item{
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:18px 20px;
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#fafafa;
+}
+.course-item h3{
+  color:var(--blue);
+  margin:0;
+  font-size:20px;
 }
 
-/* Banner completo */
-.banner-profesor img {
-  display: block;
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
+.course-actions{display:flex;gap:14px;flex-wrap:wrap;}
+.btn{
+  display:inline-block;
+  padding:8px 16px;
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
+  border-radius:6px;
 }
-
-/* Top header */
-.top-header {
-  background: #0066cc;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px 0;
+.btn-blue{
+  background:var(--blue);
+  color:#fff;
 }
-.top-header h1 {
-  font-size: 1.4em;
-  margin-bottom: 10px;
+.btn-dark{
+  background:#555;
+  color:#fff;
 }
-
-/* Nav bar */
-.nav-bar {
-  list-style: none;
-  display: flex;
-  gap: 10px;
+.empty-msg{
+  text-align:center;
+  color:#777;
+  font-style:italic;
 }
-.nav-bar li a {
-  display: inline-flex;
-  align-items: center;
-  background: #fff;
-  color: #0066cc;
-  padding: 6px 12px;
-  border: 1px solid #0066cc;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background 0.3s, color 0.3s;
+/* ===== Paneles ===== */
+.panel{
+  margin-top:16px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  padding:14px 16px;
+  background:#fff;
 }
-.nav-bar li a:hover {
-  background: #0066cc;
-  color: #fff;
+.panel.hidden{display:none;}
+.panel h4{margin:0 0 10px;color:var(--blue);}
+.row{
+  display:flex;justify-content:space-between;
+  align-items:center;
+  padding:6px 0;border-top:1px solid #eee;
 }
-
-/* Main content */
-.main-content {
-  margin-top: 0;
-  padding: 20px;
+.row:first-of-type{border-top:none;}
+.mini-btn{
+  font-size:12px;font-weight:600;text-decoration:none;
+  padding:4px 8px;border-radius:4px;color:#fff;background:var(--blue);
 }
-
-/* Alert */
-.alert-message {
-  background: #e9f7ef;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
-  color: #155724;
-  margin: 15px 0;
-  padding: 10px;
-}
-
-/* Cada sección de curso */
-.courses-section {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 30px;
-  padding: 15px 20px;
-}
-.courses-section h3 {
-  color: #003366;
-  margin-bottom: 12px;
-}
-
-/* Botones toggle */
-.toggle-enroll,
-.toggle-enrolled {
-  padding: 6px 14px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: .95em;
-}
-.toggle-enroll {
-  background: #0066cc;
-  color: #fff;
-}
-.toggle-enrolled {
-  background: #444;
-  color: #fff;
-}
-.toggle-enroll:hover { background: #005bb5; }
-.toggle-enrolled:hover { background: #333; }
-
-/* Secciones ocultas */
-.enroll-section,
-.enrolled-section {
-  display: none;
-  background: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-top: 10px;
-  padding: 10px;
-}
-.enroll-section.visible,
-.enrolled-section.visible {
-  display: block;
-}
-
-/* Buscador */
-.enroll-search-container {
-  margin-bottom: 10px;
-}
-.student-search {
-  width: 100%;
-  max-width: 300px;
-  padding: 6px 8px;
-  font-size: .9em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/* Listas */
-.students-not-enrolled,
-.students-enrolled {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.students-not-enrolled li,
-.students-enrolled li {
-  display: flex;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid #eaeaea;
-}
-.students-enrolled li:last-child {
-  border-bottom: none;
-}
-
-/* Label de estudiante */
-.student-label {
-  flex: 1;
-  margin-left: 8px;
-  text-align: left;
-  font-size: .95em;
-  color: #333;
-}
-
-/* Botón inscribir */
-.inscribir-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: #28a745;
-  color: #fff;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 1.2em;
-  transition: background .2s;
-}
-.inscribir-btn:hover {
-  background: #218838;
-}
-
-/* Botón desinscribir */
-.desinscribir-btn {
-  background: #d9534f;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: background .3s;
-}
-.desinscribir-btn:hover {
-  background: #c9302c;
-}
+.mini-btn.danger{background:#a00;}

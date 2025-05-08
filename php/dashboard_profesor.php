@@ -1,209 +1,158 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'profesor') {
-    header("Location: ../login.html");
-    exit;
+    header("Location: ../login.html"); exit;
 }
-require '../php/config.php';
+require 'config.php';
 
-$profesor_id     = $_SESSION['user_id'];
-$empresaProfesor = $mysqli->real_escape_string($_SESSION['empresa']);
-$message         = '';
+$prof_id = $_SESSION['user_id'];
+$empresa = $mysqli->real_escape_string($_SESSION['empresa']);
 
-// Procesar inscripción
-if (isset($_GET['enroll_student'])) {
-    $course_id  = (int)$_GET['course_id'];
-    $student_id = (int)$_GET['student_id'];
+/* avatar */
+$fotoFile = $_SESSION['foto'] ?? '';
+$fotoURL  = ( $fotoFile && file_exists(__DIR__."/../uploads/$fotoFile") )
+            ? '../uploads/'.rawurlencode($fotoFile)
+            : '../images/default-avatar.png';
 
-    // Verificar curso del profesor
-    $stmt = $mysqli->prepare("SELECT 1 FROM courses WHERE id = ? AND profesor_id = ?");
-    $stmt->bind_param("ii", $course_id, $profesor_id);
-    $stmt->execute();
-    if (!$stmt->get_result()->num_rows) {
-        $message = "No tienes permisos para inscribir en este curso.";
-    } else {
-        // Verificar empresa del estudiante
-        $stmt2 = $mysqli->prepare("SELECT empresa FROM users WHERE id = ?");
-        $stmt2->bind_param("i", $student_id);
-        $stmt2->execute();
-        $res2 = $stmt2->get_result();
-        $info = $res2->fetch_assoc() ?: [];
-        if (empty($info) || $info['empresa'] !== $empresaProfesor) {
-            $message = "Estudiante no pertenece a tu empresa.";
-        } else {
-            // Ya inscrito?
-            $stmt3 = $mysqli->prepare("SELECT 1 FROM enrollments WHERE course_id = ? AND user_id = ?");
-            $stmt3->bind_param("ii", $course_id, $student_id);
-            $stmt3->execute();
-            if ($stmt3->get_result()->num_rows) {
-                $message = "El estudiante ya está inscrito.";
-            } else {
-                // Insertar
-                $stmt4 = $mysqli->prepare("INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)");
-                $stmt4->bind_param("ii", $student_id, $course_id);
-                $stmt4->execute()
-                    ? $message = "¡Estudiante inscrito correctamente!"
-                    : $message = "Error al inscribir: " . $mysqli->error;
-            }
-        }
-    }
+/* cursos del profesor */
+$cursos = $mysqli->query("
+   SELECT id,nombre
+     FROM courses
+    WHERE profesor_id = $prof_id
+      AND empresa      = '$empresa'
+    ORDER BY fecha_creacion DESC
+");
+
+/* función de apoyo: devuelve array con estudiantes */
+function alumnos($mysqli,$empresa,$course_id,$yaInscritos=false){
+    return $mysqli->query(
+        $yaInscritos
+        ? "SELECT u.id,u.nombre_completo
+             FROM users u
+             JOIN enrollments e ON e.user_id=u.id
+            WHERE e.course_id=$course_id"
+        : "SELECT id,nombre_completo
+             FROM users
+            WHERE empresa ='$empresa'
+              AND rol     ='estudiante'
+              AND id NOT IN (SELECT user_id
+                                FROM enrollments
+                               WHERE course_id=$course_id)"
+    );
 }
-
-// Procesar desinscripción
-if (isset($_GET['unenroll'])) {
-    $enrollment_id = (int)$_GET['unenroll'];
-    $stmt = $mysqli->prepare("
-      SELECT e.id FROM enrollments e
-      JOIN courses c ON e.course_id = c.id
-      WHERE e.id = ? AND c.profesor_id = ?
-    ");
-    $stmt->bind_param("ii", $enrollment_id, $profesor_id);
-    $stmt->execute();
-    if (!$stmt->get_result()->num_rows) {
-        $message = "No tienes permisos para desinscribir.";
-    } else {
-        $del = $mysqli->prepare("DELETE FROM enrollments WHERE id = ?");
-        $del->bind_param("i", $enrollment_id);
-        $del->execute()
-            ? $message = "Estudiante desinscrito exitosamente."
-            : $message = "Error al desinscribir: " . $mysqli->error;
-    }
-}
-
-// Obtener cursos del profesor
-$stmt = $mysqli->prepare("SELECT id, nombre FROM courses WHERE profesor_id = ?");
-$stmt->bind_param("i", $profesor_id);
-$stmt->execute();
-$courses = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Dashboard Profesor</title>
+
   <link rel="stylesheet" href="../css/dashboard_profesor.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-
-  <div class="banner-profesor">
-    <img src="../images/talento2.png" alt="Banner Talento+">
+<header class="top-bar">
+  <div class="top-bar-left">
+     <a href="#"><img src="../images/logo_final_superior_imagen_texto.png" class="logo" alt=""></a>
   </div>
+  <div class="slogan">Guía con tu conocimiento, inspira el crecimiento</div>
+  <div class="top-bar-right">
+     <img src="<?=htmlspecialchars($fotoURL)?>" class="avatar">
+     <span class="username"><?=htmlspecialchars($_SESSION['nombre'])?></span>
 
-  <header class="top-header">
-    <h1>Bienvenido, Profesor <?= htmlspecialchars($_SESSION['nombre']) ?></h1>
-    <ul class="nav-bar">
-      <li><a href="create_course.php"><i class="fa fa-plus"></i> Crear Curso</a></li>
-      <li><a href="mis_cursos.php"><i class="fa fa-book"></i> Ver Mis Cursos</a></li>
-      <li><a href="perfil_profesor.php"><i class="fa fa-user"></i> Mi Perfil</a></li>
-      <li><a href="forum.php"><i class="fa fa-comments"></i> Foro</a></li>
-      <li><a href="logout.php"><i class="fa fa-sign-out"></i> Cerrar Sesión</a></li>
-    </ul>
-  </header>
+     <input type="checkbox" id="toggleMenu" class="toggle-menu">
+     <label for="toggleMenu" class="hamburger"><i class="fa-solid fa-bars"></i></label>
 
-  <main class="main-content">
-    <h2>Escritorio Profesor</h2>
-    <p>Aquí puedes gestionar tus cursos y estudiantes.</p>
+     <nav class="slide-menu">
+        <ul>
+          <li class="menu-header"><img src="<?=htmlspecialchars($fotoURL)?>" class="avatar-sm">
+              <strong><?=htmlspecialchars($_SESSION['nombre'])?></strong></li>
+          <li><a href="perfil_profesor.php"><i class="fa-regular fa-user"></i> Mi Perfil</a></li>
+          <li><a href="forum.php"><i class="fa-regular fa-comments"></i> Foro</a></li>
+          <li class="divider"></li>
+          <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a></li>
+        </ul>
+     </nav>
+  </div>
+</header>
 
-    <?php if ($message): ?>
-      <div class="alert-message"><?= $message ?></div>
-    <?php endif; ?>
+<div class="banner-slider"><img id="bannerImg" src="../images/RECURSOS_BANNER1.png"></div>
 
-    <?php while ($course = $courses->fetch_assoc()): ?>
-      <section class="courses-section">
-        <h3><?= htmlspecialchars($course['nombre']) ?></h3>
+<main class="course-list">
+  <h2>Mis Cursos</h2>
 
-        <button class="toggle-enroll" data-courseid="<?= $course['id'] ?>">
-          Inscribir Estudiantes
+<?php if($cursos && $cursos->num_rows): while($c = $cursos->fetch_assoc()): ?>
+<?php
+   $libres = alumnos($mysqli,$empresa,$c['id'],false);
+   $dentro = alumnos($mysqli,$empresa,$c['id'],true);
+?>
+  <article class="course-item" id="c<?= $c['id'] ?>">
+     <h3><?= htmlspecialchars($c['nombre']) ?></h3>
+
+     <div class="course-actions">
+        <button class="btn btn-blue abrir" data-panel="add" data-id="<?= $c['id'] ?>">
+           Inscribir Estudiantes
         </button>
-
-        <div class="enroll-section" id="enroll-<?= $course['id'] ?>">
-          <div class="enroll-search-container">
-            <input type="text" class="student-search" placeholder="🔍 Buscar por cédula…">
-          </div>
-          <ul class="students-not-enrolled">
-            <?php
-            $s = $mysqli->prepare("
-              SELECT id, cedula, nombre_completo 
-              FROM users 
-              WHERE rol='estudiante' 
-                AND empresa=? 
-                AND id NOT IN (
-                  SELECT user_id FROM enrollments WHERE course_id=?
-                )
-              ORDER BY cedula
-            ");
-            $s->bind_param("si", $empresaProfesor, $course['id']);
-            $s->execute();
-            $notEnrolled = $s->get_result();
-            while ($st = $notEnrolled->fetch_assoc()):
-            ?>
-              <li>
-                <a class="inscribir-btn"
-                   href="?enroll_student=1&course_id=<?= $course['id'] ?>&student_id=<?= $st['id'] ?>">+</a>
-                <span class="student-label">
-                  <?= htmlspecialchars($st['cedula'] . ' – ' . $st['nombre_completo']) ?>
-                </span>
-              </li>
-            <?php endwhile; ?>
-          </ul>
-        </div>
-
-        <button class="toggle-enrolled" data-courseid="<?= $course['id'] ?>">
-          Ver Estudiantes Inscritos
+        <button class="btn btn-dark abrir" data-panel="manage" data-id="<?= $c['id'] ?>">
+           Gestionar Estudiantes
         </button>
+     </div>
 
-        <div class="enrolled-section" id="enrolled-<?= $course['id'] ?>">
-          <ul class="students-enrolled">
-            <?php
-            $e = $mysqli->prepare("
-              SELECT e.id AS eid, u.cedula, u.nombre_completo
-              FROM enrollments e
-              JOIN users u ON e.user_id = u.id
-              WHERE e.course_id = ?
-              ORDER BY u.cedula
-            ");
-            $e->bind_param("i", $course['id']);
-            $e->execute();
-            $enrolled = $e->get_result();
-            while ($en = $enrolled->fetch_assoc()):
-            ?>
-              <li>
-                <span class="student-label">
-                  <?= htmlspecialchars($en['cedula'] . ' – ' . $en['nombre_completo']) ?>
-                </span>
-                <a class="desinscribir-btn" href="?unenroll=<?= $en['eid'] ?>">✕</a>
-              </li>
-            <?php endwhile; ?>
-          </ul>
-        </div>
-      </section>
-    <?php endwhile; ?>
-  </main>
+     <!-- PANEL: inscribir -->
+     <div class="panel hidden" id="add<?= $c['id'] ?>">
+         <h4>Estudiantes disponibles</h4>
+         <?php if($libres && $libres->num_rows): ?>
+             <?php while($al=$libres->fetch_assoc()): ?>
+                <div class="row">
+                   <span><?= htmlspecialchars($al['nombre_completo']) ?></span>
+                   <a class="mini-btn"
+                      href="inscribir.php?course=<?= $c['id'] ?>&u=<?= $al['id'] ?>">
+                      + Inscribir
+                   </a>
+                </div>
+             <?php endwhile; ?>
+         <?php else: ?><p class="empty-msg">Sin candidatos.</p><?php endif; ?>
+     </div>
 
-  <script>
-    document.querySelectorAll('.toggle-enroll').forEach(btn => {
-      btn.onclick = () => {
-        let id = btn.dataset.courseid;
-        document.getElementById('enroll-'+id).classList.toggle('visible');
-      };
-    });
-    document.querySelectorAll('.toggle-enrolled').forEach(btn => {
-      btn.onclick = () => {
-        let id = btn.dataset.courseid;
-        document.getElementById('enrolled-'+id).classList.toggle('visible');
-      };
-    });
-    document.querySelectorAll('.student-search').forEach(input => {
-      input.oninput = () => {
-        let val = input.value.trim().toLowerCase();
-        let list = input.closest('.enroll-section').querySelectorAll('li');
-        list.forEach(li => {
-          li.style.display = li.querySelector('.student-label').textContent
-                              .toLowerCase().includes(val) ? '' : 'none';
-        });
-      };
-    });
-  </script>
+     <!-- PANEL: gestionar -->
+     <div class="panel hidden" id="manage<?= $c['id'] ?>">
+         <h4>Estudiantes inscritos</h4>
+         <?php if($dentro && $dentro->num_rows): ?>
+             <?php while($al=$dentro->fetch_assoc()): ?>
+                <div class="row">
+                   <span><?= htmlspecialchars($al['nombre_completo']) ?></span>
+                   <a class="mini-btn danger"
+                      href="expulsar.php?course=<?= $c['id'] ?>&u=<?= $al['id'] ?>">
+                      × Quitar
+                   </a>
+                </div>
+             <?php endwhile; ?>
+         <?php else: ?><p class="empty-msg">No hay inscritos.</p><?php endif; ?>
+     </div>
+  </article>
+<?php endwhile; else: ?>
+     <p class="empty-msg">Aún no has creado cursos.</p>
+<?php endif; ?>
+</main>
+
+<script>
+/* slider */
+const slides=["../images/RECURSOS_BANNER1.png","../images/RECURSOS_BANNER2.png","../images/RECURSOS_BANNER3.png"];
+let i=0,img=document.getElementById("bannerImg");
+setInterval(()=>{i=(i+1)%slides.length;img.style.opacity=0;
+   setTimeout(()=>{img.src=slides[i];img.style.opacity=1;},400);
+},6000);
+
+/* abrir / cerrar paneles */
+document.querySelectorAll('.abrir').forEach(btn=>{
+   btn.addEventListener('click',e=>{
+      const id   = btn.dataset.id;
+      const tipo = btn.dataset.panel;             // add | manage
+      const panel = document.getElementById(tipo+id);
+      panel.classList.toggle('hidden');
+   });
+});
+</script>
 </body>
 </html>

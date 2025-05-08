@@ -71,6 +71,7 @@ $cursos = $mysqli->query($sql);
         <li><a href="perfil_estudiante.php"><i class="fa-regular fa-user"></i> Mi Perfil</a></li>
         <li><a href="cursos_inscritos.php"><i class="fa fa-graduation-cap" style="color:#000;"></i> Mis Cursos</a></li>
         <li><a href="cursos_realizados.php"><i class="fa-solid fa-clipboard-check"></i> Cursos Realizados</a></li>
+        <li><a href="forum.php"><i class="fa fa-graduation-cap" style="color:#000;"></i> Foro</a></li>
 
         <li class="divider"></li>
         <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a></li>
