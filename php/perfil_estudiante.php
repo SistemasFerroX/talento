@@ -62,7 +62,7 @@ $fotoURL = (!empty($user['foto']) && file_exists(__DIR__."/../uploads/{$user['fo
   <header class="top-bar">
     <div class="top-bar-left">
       <a href="dashboard_estudiante.php">
-        <img src="../images/logo_nuevo_blanco.png" class="logo" alt="Talento+">
+        <img src="../images/logo_final_superior_imagen_texto_blanco.png" class="logo" alt="Talento+">
       </a>
     </div>
     <div class="slogan">Impulsa tu talento, transforma tu futuro</div>
@@ -75,8 +75,12 @@ $fotoURL = (!empty($user['foto']) && file_exists(__DIR__."/../uploads/{$user['fo
             <img src="<?=htmlspecialchars($fotoURL)?>" class="avatar-sm" alt="">
             <strong><?=htmlspecialchars($user['nombre_completo'].' '.$user['apellidos'])?></strong>
           </li>
-          <li><a href="perfil_estudiante.php"><i class="fa-regular fa-user"></i> Mi Perfil</a></li>
-          <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a></li>
+          <li><a href="perfil_estudiante.php"><i class="fa-regular fa-user"></i>Mi Perfil</a></li>
+          <li><a href="cursos_inscritos.php"><i class="fa-solid fa-graduation-cap"></i>Mis Cursos</a></li>
+          <li><a href="cursos_realizados.php"><i class="fa-solid fa-clipboard-check"></i>Cursos Realizados</a></li>
+          <li><a href="forum.php"><i class="fa-regular fa-comments"></i>Foro</a></li>
+          <li class="divider"></li>
+          <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i>Cerrar Sesión</a></li>
         </ul>
       </nav>
       <img src="<?=htmlspecialchars($fotoURL)?>" class="avatar" alt="Perfil">
