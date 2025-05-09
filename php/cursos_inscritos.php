@@ -1,34 +1,37 @@
 <?php
-// cursos_inscritos.php  — lista cursos que el estudiante puede tomar / repetir
+// cursos_inscritos.php
 session_start();
-
-if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'estudiante') {
+if (!isset($_SESSION['user_id']) || $_SESSION['rol']!=='estudiante') {
     header("Location: ../login.html");
     exit;
 }
 require 'config.php';
 
-$student_id = $_SESSION['user_id'];
+$student_id = (int)$_SESSION['user_id'];
 $empresa    = $mysqli->real_escape_string($_SESSION['empresa']);
 
-/* Foto para la barra */
+// Foto para el menú
 $fotoFile = $_SESSION['foto'] ?? '';
-$fotoDisk = __DIR__.'/../uploads/'.$fotoFile;
+$fotoDisk = __DIR__ . '/../uploads/' . $fotoFile;
 $fotoURL  = ($fotoFile && file_exists($fotoDisk))
-            ? '../uploads/'.rawurlencode($fotoFile)
-            : '../images/default-avatar.png';
+         ? '../uploads/' . rawurlencode($fotoFile)
+         : '../images/default-avatar.png';
 
-/* Cursos inscritos no aprobados (<80) */
+// Recupero los cursos pendientes
 $sql = "
-  SELECT c.id, c.nombre, c.descripcion,
-         (SELECT MAX(g.calificacion) FROM grades g
-           WHERE g.course_id = c.id AND g.user_id = $student_id) AS calificacion
+  SELECT c.id, c.nombre,
+         (SELECT MAX(g.calificacion)
+            FROM grades g
+           WHERE g.course_id = c.id
+             AND g.user_id   = $student_id
+         ) AS cal
     FROM courses c
     JOIN enrollments e ON c.id = e.course_id
    WHERE e.user_id = $student_id
      AND c.empresa = '$empresa'
-   HAVING calificacion < 80 OR calificacion IS NULL
-   ORDER BY c.nombre";
+   HAVING cal < 80 OR cal IS NULL
+   ORDER BY c.nombre
+";
 $cursos = $mysqli->query($sql);
 ?>
 <!DOCTYPE html>
@@ -36,83 +39,80 @@ $cursos = $mysqli->query($sql);
 <head>
   <meta charset="UTF-8">
   <title>Mis cursos inscritos</title>
-  <link rel="stylesheet" href="../css/dashboard_estudiante.css">
+  <link rel="stylesheet" href="../css/cursos_inscritos.css">
   <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-<!-- ───────── BARRA SUPERIOR ───────── -->
-<header class="top-bar">
-  <!-- Logo -->
-  <div class="top-bar-left">
-    <a href="dashboard_estudiante.php" class="logo-link">
-      <img src="../images/logo_nuevo_blanco.png" class="logo" alt="Logo">
-    </a>
-  </div>
+  <!-- BARRA SUPERIOR -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <a href="dashboard_estudiante.php">
+        <img src="../images/logo_nuevo_blanco.png" class="logo" alt="Talento+">
+      </a>
+    </div>
+    <div class="slogan">Impulsa tu talento, transforma tu futuro</div>
+    <div class="top-bar-right">
+      <img src="<?= $fotoURL ?>" class="avatar" alt="">
+      <span class="username"><?= htmlspecialchars($_SESSION['nombre']) ?></span>
+      <input type="checkbox" id="toggleMenu" class="toggle-menu">
+      <label for="toggleMenu" class="hamburger"><i class="fa fa-bars"></i></label>
+      <nav class="slide-menu">
+        <ul>
+          <li class="menu-header">
+            <img src="<?= $fotoURL ?>" class="avatar-sm" alt="">
+            <strong><?= htmlspecialchars($_SESSION['nombre']) ?></strong>
+          </li>
+          <li><a href="dashboard_estudiante.php"><i class="fa fa-home"></i> Home</a></li>
+          <li><a href="cursos_inscritos.php"><i class="fa fa-graduation-cap"></i> Mis Cursos</a></li>
+          <li class="divider"></li>
+          <li><a href="logout.php"><i class="fa fa-sign-out"></i> Cerrar Sesión</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-  <!-- Usuario + Hamburguesa -->
-  <div class="top-bar-right">
-    <img src="<?= htmlspecialchars($fotoURL) ?>" class="avatar" alt="Perfil">
-    <span class="username"><?= htmlspecialchars($_SESSION['nombre']) ?></span>
+  <!-- NO HAY BÚSQUEDA NI CATEGORÍAS -->
 
-    <!-- Checkbox que controla el menú -->
-    <input type="checkbox" id="toggleMenu" class="toggle-menu">
-    <label for="toggleMenu" class="hamburger"><i class="fa fa-bars"></i></label>
+  <main class="layout-container">
 
-    <!-- Menú deslizable -->
-    <nav class="slide-menu">
-      <ul>
-        <li class="menu-header">
-          <img src="<?= htmlspecialchars($fotoURL) ?>" class="avatar-sm" alt="Avatar">
-          <strong><?= htmlspecialchars($_SESSION['nombre']) ?></strong>
-        </li>
-
-        <!-- NUEVA opción Home -->
-        <li><a href="dashboard_estudiante.php"><i class="fa fa-home" style="color:#000;"></i> Home</a></li>
-
-        <!-- Enlace a esta misma página (facultativo) -->
-        <li><a href="cursos_inscritos.php"><i class="fa fa-graduation-cap" style="color:#000;"></i> Mis Cursos</a></li>
-
-        <li class="divider"></li>
-        <li><a href="logout.php"><i class="fa fa-sign-out" style="color:#000;"></i> Cerrar Sesión</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
-<!-- ─────── /BARRA SUPERIOR ─────── -->
-
-<!-- No hay banner -->
-
-<nav class="breadcrumb">
-  <ul>
-    <li><a href="dashboard_estudiante.php">Inicio</a></li>
-    <li>Mis cursos</li>
-  </ul>
-</nav>
-
-<main class="layout-container" style="grid-template-columns:1fr;">
-  <section class="main-content">
-    <h2>Mis cursos inscritos</h2>
-
-    <?php if ($cursos && $cursos->num_rows > 0): ?>
-      <div class="course-grid">
-        <?php while ($curso = $cursos->fetch_assoc()): ?>
-          <?php
-            $cal = $curso['calificacion'];
-            $btn = is_null($cal) ? "Acceder" : "Repetir";
+    <!-- CONTENEDOR VERDE: Título y lista -->
+    <section class="box-green">
+      <h2>Mis cursos inscritos</h2>
+      <?php if ($cursos && $cursos->num_rows > 0): ?>
+        <ul class="course-list">
+          <?php while ($c = $cursos->fetch_assoc()): 
+            $btn = is_null($c['cal']) ? 'Empezar Curso' : 'Repetir Curso';
           ?>
-          <div class="course-card enrolled">
-            <h3><?= htmlspecialchars($curso['nombre']) ?></h3>
-            <p><?= htmlspecialchars($curso['descripcion']) ?></p>
-            <a href="course_content.php?course_id=<?= $curso['id'] ?>" class="btn-acceder"><?= $btn ?></a>
-          </div>
-        <?php endwhile; ?>
+            <li>
+              <span><?= htmlspecialchars($c['nombre']) ?></span>
+              <a href="course_content.php?course_id=<?= $c['id'] ?>" class="btn-curso"><?= $btn ?></a>
+            </li>
+          <?php endwhile; ?>
+        </ul>
+      <?php else: ?>
+        <p>No tienes cursos pendientes.</p>
+      <?php endif; ?>
+    </section>
+
+    <!-- CONTENEDOR AMARILLO: BANNER CENTRAL -->
+    <section class="box-yellow">
+      <div class="banner">
+        <img src="../images/banner_mis_cursos.png"
+             alt="Impulsa tu futuro hoy">
       </div>
-    <?php else: ?>
-      <p>No tienes cursos pendientes para repetir o completar.</p>
-    <?php endif; ?>
-  </section>
-</main>
+    </section>
+
+    <!-- CONTENEDOR ROJO: PANEL TALENTO+ -->
+    <aside class="box-red">
+      <div class="talent">
+        <h3>TALENTO +</h3>
+        <p>Impulsa tu talento,<br>transforma tu futuro</p>
+      </div>
+    </aside>
+
+  </main>
+
 </body>
 </html>

@@ -9,7 +9,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:#f5f5f5;color:#333;}
 }
 /* logo */
 .top-bar-left{display:flex;align-items:center;gap:18px;}
-.logo{height:38px;}
+.logo{height:200px;}
 /* eslogan */
 .slogan{
   position:absolute;left:50%;transform:translateX(-50%);

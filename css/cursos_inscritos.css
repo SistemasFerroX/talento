@@ -1,0 +1,178 @@
+/* ===== RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: Roboto, Arial, sans-serif;
+    background: #F1F3F5;
+    color: #333;
+  }
+  
+  /* ===== BARRA SUPERIOR ===== */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    background: #0066CC;
+    height: 60px;
+    padding: 0 20px;
+  }
+  .top-bar-left .logo {
+    height: 32px;
+  }
+  .slogan {
+    flex: 1;
+    text-align: center;
+    color: #fff;
+    font-weight: 500;
+  }
+  .top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  .top-bar-right .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .top-bar-right .username {
+    color: #fff;
+    font-weight: 500;
+  }
+  .toggle-menu {
+    display: none;
+  }
+  .hamburger {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  .slide-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 60px;
+    width: 220px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    z-index: 20;
+  }
+  .toggle-menu:checked ~ .slide-menu {
+    display: block;
+  }
+  .slide-menu ul {
+    list-style: none;
+  }
+  .slide-menu li {
+    border-bottom: 1px solid #ddd;
+  }
+  .slide-menu li.divider {
+    border: none;
+    margin: 6px 0;
+  }
+  .menu-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+  }
+  .avatar-sm {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .slide-menu a {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+  }
+  .slide-menu a:hover {
+    background: #F1F3F5;
+  }
+  
+  /* ===== GRID PRINCIPAL (3 columnas) ===== */
+  .layout-container {
+    display: grid;
+    /* columna cursos más ancha, banner central, talento fijo 300px */
+    grid-template-columns: 1.8fr 1fr 300px;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  /* ===== VERDE: Mis cursos inscritos ===== */
+  .box-green {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .box-green h2 {
+    font-size: 28px;
+    color: #004A99;
+    margin-bottom: 16px;
+  }
+  .course-list {
+    list-style: none;
+  }
+  .course-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .course-list li:last-child {
+    border-bottom: none;
+  }
+  .btn-curso {
+    background: #0066CC;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  /* ===== AMARILLO: Banner central ===== */
+  .box-yellow .banner {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .box-yellow .banner img {
+    width: 100%;
+    /* altura limitada para no desbordar */
+    height: 570px;
+    object-fit: cover;
+  }
+  
+  /* ===== ROJO: Talento + ===== */
+  .box-red .talent {
+    background: #0066CC;
+    border-radius: 8px;
+    padding: 20px;
+    color: #fff;
+    text-align: center;
+    /* fuerza altura mínima y centra el contenido */
+    min-height: 570px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .box-red .talent h3 {
+    margin-bottom: 12px;
+    font-size: 20px;
+  }
+  .box-red .talent p {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  

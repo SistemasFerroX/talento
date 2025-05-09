@@ -46,7 +46,7 @@ $cursos = $mysqli->query($sql);
   <!-- Logo -->
   <div class="top-bar-left">
     <a href="dashboard_estudiante.php" class="logo-link">
-      <img src="../images/logo_nuevo_blanco.png" class="logo" alt="Logo">
+      <img src="../images/logo_final_superior_imagen_texto_blanco.png" class="logo" alt="Logo">
     </a>
   </div>
 
