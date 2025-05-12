@@ -19,7 +19,7 @@
     padding: 0 20px;
   }
   .top-bar-left .logo {
-    height: 32px;
+    height: 200px; 
   }
   .slogan {
     flex: 1;
@@ -102,13 +102,12 @@
   /* ===== GRID PRINCIPAL (3 columnas) ===== */
   .layout-container {
     display: grid;
-    /* columna cursos más ancha, banner central, talento fijo 300px */
     grid-template-columns: 1.8fr 1fr 300px;
     gap: 20px;
     padding: 20px;
   }
   
-  /* ===== VERDE: Mis cursos inscritos ===== */
+  /* ===== VERDE: MIS CURSOS INSCRITOS ===== */
   .box-green {
     background: #fff;
     border-radius: 8px;
@@ -141,7 +140,7 @@
     font-size: 14px;
   }
   
-  /* ===== AMARILLO: Banner central ===== */
+  /* ===== AMARILLO: BANNER CENTRAL ===== */
   .box-yellow .banner {
     background: #fff;
     border-radius: 8px;
@@ -149,19 +148,18 @@
   }
   .box-yellow .banner img {
     width: 100%;
-    /* altura limitada para no desbordar */
     height: 570px;
     object-fit: cover;
+    display: block;
   }
   
-  /* ===== ROJO: Talento + ===== */
+  /* ===== ROJO: TALENTO + ===== */
   .box-red .talent {
     background: #0066CC;
     border-radius: 8px;
     padding: 20px;
     color: #fff;
     text-align: center;
-    /* fuerza altura mínima y centra el contenido */
     min-height: 570px;
     display: flex;
     flex-direction: column;

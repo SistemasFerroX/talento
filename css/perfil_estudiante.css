@@ -17,7 +17,7 @@ body { font-family: Roboto,Arial,sans-serif; background:#F1F3F5; color:#333; }
   display:flex; align-items:center;
   background:var(--blue-top); height:60px; padding:0 20px; position:relative;
 }
-.top-bar-left .logo { height:120px; }
+.top-bar-left .logo { height:200px; }
 .slogan {
   position:absolute; left:50%; transform:translateX(-50%);
   color:var(--white); font-weight:500; font-size:16px;

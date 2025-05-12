@@ -70,6 +70,7 @@ function alumnos($mysqli,$empresa,$course_id,$yaInscritos=false){
               <strong><?=htmlspecialchars($_SESSION['nombre'])?></strong></li>
           <li><a href="perfil_profesor.php"><i class="fa-regular fa-user"></i> Mi Perfil</a></li>
           <li><a href="forum.php"><i class="fa-regular fa-comments"></i> Foro</a></li>
+          <li><a href="create_course.php"><i class="fa fa-graduation-cap"></i> Crear Curso</a></li>
           <li class="divider"></li>
           <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a></li>
         </ul>

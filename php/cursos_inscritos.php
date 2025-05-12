@@ -49,7 +49,7 @@ $cursos = $mysqli->query($sql);
   <header class="top-bar">
     <div class="top-bar-left">
       <a href="dashboard_estudiante.php">
-        <img src="../images/logo_nuevo_blanco.png" class="logo" alt="Talento+">
+        <img src="../images/logo_final_superior_imagen_texto_blanco.png" class="logo" alt="Talento+">
       </a>
     </div>
     <div class="slogan">Impulsa tu talento, transforma tu futuro</div>
