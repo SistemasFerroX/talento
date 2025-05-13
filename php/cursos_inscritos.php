@@ -73,11 +73,11 @@ $cursos = $mysqli->query($sql);
     </div>
   </header>
 
-  <!-- NO HAY BÚSQUEDA NI CATEGORÍAS -->
+  <!-- SIN BÚSQUEDA NI CATEGORÍAS -->
 
   <main class="layout-container">
 
-    <!-- CONTENEDOR VERDE: Título y lista -->
+    <!-- CONTENEDOR VERDE: Título y lista de cursos -->
     <section class="box-green">
       <h2>Mis cursos inscritos</h2>
       <?php if ($cursos && $cursos->num_rows > 0): ?>
@@ -96,21 +96,12 @@ $cursos = $mysqli->query($sql);
       <?php endif; ?>
     </section>
 
-    <!-- CONTENEDOR AMARILLO: BANNER CENTRAL -->
+    <!-- CONTENEDOR AMARILLO: Banner central -->
     <section class="box-yellow">
       <div class="banner">
-        <img src="../images/banner_mis_cursos.png"
-             alt="Impulsa tu futuro hoy">
+        <img src="../images/banner_mis_cursos.png" alt="Impulsa tu futuro hoy">
       </div>
     </section>
-
-    <!-- CONTENEDOR ROJO: PANEL TALENTO+ -->
-    <aside class="box-red">
-      <div class="talent">
-        <h3>TALENTO +</h3>
-        <p>Impulsa tu talento,<br>transforma tu futuro</p>
-      </div>
-    </aside>
 
   </main>
 
