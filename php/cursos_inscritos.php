@@ -10,13 +10,6 @@ require 'config.php';
 $student_id = (int)$_SESSION['user_id'];
 $empresa    = $mysqli->real_escape_string($_SESSION['empresa']);
 
-// Foto para el menú
-$fotoFile = $_SESSION['foto'] ?? '';
-$fotoDisk = __DIR__ . '/../uploads/' . $fotoFile;
-$fotoURL  = ($fotoFile && file_exists($fotoDisk))
-         ? '../uploads/' . rawurlencode($fotoFile)
-         : '../images/default-avatar.png';
-
 // Recupero los cursos pendientes
 $sql = "
   SELECT c.id, c.nombre,
@@ -49,19 +42,18 @@ $cursos = $mysqli->query($sql);
   <header class="top-bar">
     <div class="top-bar-left">
       <a href="dashboard_estudiante.php">
-        <img src="../images/logo_final_superior_imagen_texto_blanco.png" class="logo" alt="Talento+">
+        <img src="../images/logo_final_superior_imagen_texto_blanco.png"
+             class="logo" alt="Talento+">
       </a>
     </div>
     <div class="slogan">Impulsa tu talento, transforma tu futuro</div>
     <div class="top-bar-right">
-      <img src="<?= $fotoURL ?>" class="avatar" alt="">
       <span class="username"><?= htmlspecialchars($_SESSION['nombre']) ?></span>
       <input type="checkbox" id="toggleMenu" class="toggle-menu">
       <label for="toggleMenu" class="hamburger"><i class="fa fa-bars"></i></label>
       <nav class="slide-menu">
         <ul>
           <li class="menu-header">
-            <img src="<?= $fotoURL ?>" class="avatar-sm" alt="">
             <strong><?= htmlspecialchars($_SESSION['nombre']) ?></strong>
           </li>
           <li><a href="dashboard_estudiante.php"><i class="fa fa-home"></i> Home</a></li>
@@ -72,8 +64,6 @@ $cursos = $mysqli->query($sql);
       </nav>
     </div>
   </header>
-
-  <!-- SIN BÚSQUEDA NI CATEGORÍAS -->
 
   <main class="layout-container">
 
@@ -87,7 +77,8 @@ $cursos = $mysqli->query($sql);
           ?>
             <li>
               <span><?= htmlspecialchars($c['nombre']) ?></span>
-              <a href="course_content.php?course_id=<?= $c['id'] ?>" class="btn-curso"><?= $btn ?></a>
+              <a href="course_content.php?course_id=<?= $c['id'] ?>"
+                 class="btn-curso"><?= $btn ?></a>
             </li>
           <?php endwhile; ?>
         </ul>

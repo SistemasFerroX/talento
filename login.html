@@ -8,20 +8,23 @@
 <body>
 
   <div class="login-split">
-    <!-- Lado izquierdo: imagen -->
+    <!-- Lado izquierdo: imagen de fondo -->
     <div class="login-left"></div>
 
     <!-- Lado derecho: formulario -->
     <div class="login-right">
       <div class="login-box">
-        <img src="images/logo_final_superior_imagen_texto.png" alt="Logo Talento+" class="login-logo">
+        <!-- Logo animado -->
+        <img src="images/logo_final_superior_imagen_texto.png"
+             alt="Logo Talento+"
+             class="login-logo">
         <h2 class="login-title">Inicia Sesión</h2>
         <form action="php/login.php" method="POST" class="login-form">
           <input type="text" name="cedula" placeholder="Cédula" required>
           <input type="password" name="password" placeholder="Contraseña" required>
           <button type="submit">Iniciar Sesión</button>
         </form>
-        <a href="#" class="login-forgot">Términos de Uso - Política de Privacidad</a>
+        <a href="#" class="login-forgot">Términos de Uso – Política de Privacidad</a>
       </div>
     </div>
   </div>

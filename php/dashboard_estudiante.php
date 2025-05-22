@@ -8,24 +8,20 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'estudiante') {
 }
 require 'config.php';
 
-$student_id = $_SESSION['user_id'];
+$student_id = (int)$_SESSION['user_id'];
 $empresa    = $mysqli->real_escape_string($_SESSION['empresa']);
 
-/* foto de perfil ---------------------------------------------------- */
-$fotoFile = $_SESSION['foto'] ?? '';
-$fotoDisk = __DIR__.'/../uploads/'.$fotoFile;
-$fotoURL  = ($fotoFile && file_exists($fotoDisk))
-            ? '../uploads/'.rawurlencode($fotoFile)
-            : '../images/default-avatar.png';
-
-/* cursos disponibles (no inscritos) --------------------------------- */
+/* cursos disponibles (no inscritos) */
 $sql = "
-  SELECT id,nombre,descripcion,portada
+  SELECT id, nombre, descripcion, portada
     FROM courses
-   WHERE id NOT IN (SELECT course_id
-                      FROM enrollments
-                     WHERE user_id = $student_id)
-     AND empresa = '$empresa'";
+   WHERE id NOT IN (
+     SELECT course_id
+       FROM enrollments
+      WHERE user_id = $student_id
+   )
+     AND empresa = '$empresa'
+";
 $cursos = $mysqli->query($sql);
 ?>
 <!DOCTYPE html>
@@ -37,7 +33,8 @@ $cursos = $mysqli->query($sql);
   <link rel="stylesheet" href="../css/dashboard_estudiante.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
 </head>
 <body>
 
@@ -46,35 +43,55 @@ $cursos = $mysqli->query($sql);
   <!-- Logo -->
   <div class="top-bar-left">
     <a href="dashboard_estudiante.php" class="logo-link">
-      <img src="../images/logo_final_superior_imagen_texto_blanco.png" class="logo" alt="Logo">
+      <img src="../images/logo_final_superior_imagen_texto_blanco.png"
+           class="logo" alt="Talento+">
     </a>
   </div>
 
   <!-- Eslogan -->
-  <div class="slogan">Avanza con propósito, crece con&nbsp;visión</div>
+  <div class="slogan">Avanza con propósito, crece con visión</div>
 
-  <!-- Usuario -->
+  <!-- Usuario (solo nombre) -->
   <div class="top-bar-right">
-    <img src="<?= htmlspecialchars($fotoURL) ?>" class="avatar" alt="Perfil">
     <span class="username"><?= htmlspecialchars($_SESSION['nombre']) ?></span>
 
     <input type="checkbox" id="toggleMenu" class="toggle-menu">
-    <label for="toggleMenu" class="hamburger"><i class="fa-solid fa-bars"></i></label>
+    <label for="toggleMenu" class="hamburger">
+      <i class="fa-solid fa-bars"></i>
+    </label>
 
     <nav class="slide-menu">
       <ul>
         <li class="menu-header">
-          <img src="<?= htmlspecialchars($fotoURL) ?>" class="avatar-sm" alt="Avatar">
+          <!-- Imagen eliminada -->
           <strong><?= htmlspecialchars($_SESSION['nombre']) ?></strong>
         </li>
-
-        <li><a href="perfil_estudiante.php"><i class="fa-regular fa-user"></i> Mi Perfil</a></li>
-        <li><a href="cursos_inscritos.php"><i class="fa fa-graduation-cap" style="color:#000;"></i> Mis Cursos</a></li>
-        <li><a href="cursos_realizados.php"><i class="fa-solid fa-clipboard-check"></i> Cursos Realizados</a></li>
-        <li><a href="forum.php"><i class="fa fa-graduation-cap" style="color:#000;"></i> Foro</a></li>
-
+        <li>
+          <a href="perfil_estudiante.php">
+            <i class="fa-regular fa-user"></i> Mi Perfil
+          </a>
+        </li>
+        <li>
+          <a href="cursos_inscritos.php">
+            <i class="fa-solid fa-graduation-cap"></i> Mis Cursos
+          </a>
+        </li>
+        <li>
+          <a href="cursos_realizados.php">
+            <i class="fa-solid fa-clipboard-check"></i> Cursos Realizados
+          </a>
+        </li>
+        <li>
+          <a href="forum.php">
+            <i class="fa-regular fa-comments"></i> Foro
+          </a>
+        </li>
         <li class="divider"></li>
-        <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a></li>
+        <li>
+          <a href="logout.php">
+            <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+          </a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -96,16 +113,15 @@ $cursos = $mysqli->query($sql);
 
       <?php if ($cursos && $cursos->num_rows): ?>
         <div class="course-grid">
-          <?php while ($c = $cursos->fetch_assoc()): ?>
-            <?php
-              $cover = $c['portada']
-                       ? "../uploads/covers/{$c['portada']}"
-                       : "../images/placeholder.jpg";
-            ?>
+          <?php while ($c = $cursos->fetch_assoc()): 
+            $cover = $c['portada']
+                     ? "../uploads/covers/{$c['portada']}"
+                     : "../images/placeholder.jpg";
+          ?>
             <a href="course_detail.php?course_id=<?= $c['id'] ?>"
                class="course-thumb"
                style="background-image:url('<?= $cover ?>');">
-               <span><?= htmlspecialchars($c['nombre']) ?></span>
+              <span><?= htmlspecialchars($c['nombre']) ?></span>
             </a>
           <?php endwhile; ?>
         </div>
@@ -116,19 +132,25 @@ $cursos = $mysqli->query($sql);
   </div>
 </main>
 
-<!-- Slider script (4 imágenes · 6 s) -->
+<!-- Slider script (4 imágenes · 6 s) -->
 <script>
-const slides=["../images/RECURSOS_BANNER1.png",
-              "../images/RECURSOS_BANNER2.png",
-              "../images/RECURSOS_BANNER3.png",
-              "../images/RECURSOS_BANNER4.png"];
-let idx=0;
-const img=document.getElementById("bannerImg");
-setInterval(()=>{
-  idx=(idx+1)%slides.length;
-  img.style.opacity=0;
-  setTimeout(()=>{img.src=slides[idx];img.style.opacity=1;},400);
-},6000);
+  const slides = [
+    "../images/RECURSOS_BANNER1.png",
+    "../images/RECURSOS_BANNER2.png",
+    "../images/RECURSOS_BANNER3.png",
+    "../images/RECURSOS_BANNER4.png"
+  ];
+  let idx = 0;
+  const img = document.getElementById("bannerImg");
+  setInterval(() => {
+    idx = (idx + 1) % slides.length;
+    img.style.opacity = 0;
+    setTimeout(() => {
+      img.src = slides[idx];
+      img.style.opacity = 1;
+    }, 400);
+  }, 6000);
 </script>
+
 </body>
 </html>

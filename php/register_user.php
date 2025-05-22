@@ -1,36 +1,59 @@
 <?php
 session_start();
+require '../php/config.php';
 
-require '../php/config.php'; // Asegúrate de que la ruta sea correcta
-
-$mensaje = ""; // Variable para mostrar mensajes
+$mensaje = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Recoger y sanear los datos enviados utilizando la conexión $mysqli
+    // 1) Sanitizar entradas
     $cedula          = $mysqli->real_escape_string($_POST['cedula']);
     $nombre          = $mysqli->real_escape_string($_POST['nombre']);
     $apellidos       = $mysqli->real_escape_string($_POST['apellidos']);
-    $correo          = isset($_POST['correo']) ? $mysqli->real_escape_string($_POST['correo']) : "";
+    $correo          = $mysqli->real_escape_string($_POST['correo'] ?? '');
     $rol             = $mysqli->real_escape_string($_POST['rol']);
-    // Los campos de empresa
     $empresa         = $mysqli->real_escape_string($_POST['empresa']);
-    $sub_empresa     = isset($_POST['sub_empresa']) ? $mysqli->real_escape_string($_POST['sub_empresa']) : "";
-    $sub_sub_empresa = isset($_POST['sub_sub_empresa']) ? $mysqli->real_escape_string($_POST['sub_sub_empresa']) : "";
+    $sub_empresa     = $mysqli->real_escape_string($_POST['proceso'] ?? '');
+    $sub_sub_empresa = $mysqli->real_escape_string($_POST['subproceso'] ?? '');
     $cargo           = $mysqli->real_escape_string($_POST['cargo']);
-    // Nuevo campo: número de celular (opcional)
-    $celular         = isset($_POST['celular']) ? $mysqli->real_escape_string($_POST['celular']) : "";
-    
-    // La contraseña se establece igual a la cédula y se cifra
+    $celular         = $mysqli->real_escape_string($_POST['celular'] ?? '');
+
+    // 2) La contraseña será igual a la cédula
     $hashed_password = password_hash($cedula, PASSWORD_DEFAULT);
-    
-    // Inserta los datos; se agregan los campos opcionales sub_empresa y sub_sub_empresa
-    $query = "INSERT INTO users (cedula, nombre_completo, apellidos, correo, password, rol, empresa, cargo, celular) 
-              VALUES ('$cedula', '$nombre', '$apellidos', '$correo', '$hashed_password', '$rol', '$empresa', '$cargo', '$celular')";
-    
-    if ($mysqli->query($query)) {
+
+    // 3) Insertar en la base de datos
+    $sql = "
+      INSERT INTO users 
+        (cedula,
+         nombre_completo,
+         apellidos,
+         correo,
+         password,
+         rol,
+         empresa,
+         sub_empresa,
+         sub_sub_empresa,
+         cargo,
+         celular)
+      VALUES
+        (
+          '$cedula',
+          '$nombre',
+          '$apellidos',
+          '$correo',
+          '$hashed_password',
+          '$rol',
+          '$empresa',
+          '$sub_empresa',
+          '$sub_sub_empresa',
+          '$cargo',
+          '$celular'
+        )
+    ";
+
+    if ($mysqli->query($sql)) {
         $mensaje = "Usuario creado exitosamente.";
     } else {
-        $mensaje = "Error: " . $mysqli->error;
+        $mensaje = "Error al crear usuario: " . $mysqli->error;
     }
 }
 ?>
@@ -39,191 +62,217 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <title>Registrar Usuario</title>
-  <!-- Fuente de Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- Enlace al CSS -->
-  <link rel="stylesheet" href="../css/registro.css">
   <style>
-    /* Ejemplo de estilos para los selects en cascada */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: Roboto,Arial,sans-serif; background:#F1F3F5; color:#333; }
+    .back-button {
+      display:inline-block; margin:20px;
+      background:#0066CC; color:#fff; padding:8px 12px;
+      text-decoration:none; border-radius:4px;
+    }
+    .registro-container {
+      display:flex; justify-content:center; padding:20px;
+    }
+    .card {
+      background:#fff; padding:20px; border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,.1); width:400px;
+    }
+    .card h1 { color:#0066CC; margin-bottom:16px; }
+    .mensaje {
+      background:#e9f7ef; border:1px solid #c3e6cb;
+      color:#155724; padding:10px; border-radius:4px;
+      margin-bottom:16px;
+    }
+    .form-group { margin-bottom:12px; }
+    .form-group label { display:block; margin-bottom:4px; }
+    .form-group input,
     .form-group select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 10px;
+      width:100%; padding:8px; font-size:14px;
+      border:1px solid #ccc; border-radius:4px;
+    }
+    button {
+      width:100%; padding:10px; background:#0066CC;
+      color:#fff; border:none; border-radius:4px;
+      font-size:16px; cursor:pointer;
     }
   </style>
 </head>
 <body>
-  <!-- Botón fijo para volver al dashboard -->
-  <a href="dashboard_admin.php" class="back-button">Volver al Dashboard</a>
+
+  <a href="dashboard_admin.php" class="back-button">← Volver al Dashboard</a>
 
   <div class="registro-container">
     <div class="card">
-      <header>
-        <h1>Registrar Usuario</h1>
-      </header>
-      <?php if(!empty($mensaje)): ?>
-        <p class="mensaje"><?php echo $mensaje; ?></p>
+      <h1>Registrar Usuario</h1>
+
+      <?php if ($mensaje): ?>
+        <p class="mensaje"><?= htmlspecialchars($mensaje) ?></p>
       <?php endif; ?>
-      <form action="register_user.php" method="POST">
+
+      <form method="POST" action="register_user.php">
         <div class="form-group">
-          <label for="cedula">Cédula:</label>
-          <input type="text" name="cedula" id="cedula" placeholder="Ingresa tu cédula" required>
+          <label for="cedula">Cédula *</label>
+          <input type="text" id="cedula" name="cedula" required>
         </div>
+
         <div class="form-group">
-          <label for="nombre">Nombre Completo:</label>
-          <input type="text" name="nombre" id="nombre" placeholder="Ingresa tu nombre" required>
+          <label for="nombre">Nombre Completo *</label>
+          <input type="text" id="nombre" name="nombre" required>
         </div>
+
         <div class="form-group">
-          <label for="apellidos">Apellidos:</label>
-          <input type="text" name="apellidos" id="apellidos" placeholder="Ingresa tus apellidos" required>
+          <label for="apellidos">Apellidos *</label>
+          <input type="text" id="apellidos" name="apellidos" required>
         </div>
+
         <div class="form-group">
-          <label for="correo">Correo (opcional):</label>
-          <input type="email" name="correo" id="correo" placeholder="correo@ejemplo.com">
+          <label for="correo">Correo (opcional)</label>
+          <input type="email" id="correo" name="correo">
         </div>
+
         <div class="form-group">
-          <label for="rol">Rol:</label>
-          <select name="rol" id="rol" required>
-            <option value="" disabled selected>Selecciona un rol</option>
+          <label for="rol">Rol *</label>
+          <select id="rol" name="rol" required>
+            <option value="" disabled selected>— Selecciona —</option>
             <option value="estudiante">Estudiante</option>
             <option value="profesor">Profesor</option>
             <option value="admin">Administrador</option>
           </select>
         </div>
-        <!-- Selección de la Empresa con select cascada -->
+
         <div class="form-group">
-          <label for="empresa">Empresa a la que pertenece:</label>
-          <select name="empresa" id="empresa" required>
-            <option value="" disabled selected>Selecciona una empresa</option>
-            <option value="Ferbienes">Inversiones Ferbienes</option>
-            <option value="Agrosigo">Comercializadora Agrosigo</option>
-            <option value="Tribilin">Inversiones Tribilin</option>
-            <option value="Agrosigo2">Agrosigo</option>
+          <label for="empresa">Empresa *</label>
+          <select id="empresa" name="empresa" required>
+            <option value="" disabled selected>— Selecciona —</option>
+            <option value="Inversiones Ferbienes">Inversiones Ferbienes</option>
+            <option value="Comercializadora Agrosigo">Comercializadora Agrosigo</option>
+            <option value="Inversiones Tribilin">Inversiones Tribilin</option>
+            <option value="Agrosigo">Agrosigo</option>
           </select>
         </div>
-        <!-- Los siguientes selects son opcionales; por ello, se elimina el atributo "required" -->
-        <div class="form-group">
-          <label for="sub_empresa" style="display:none;">Seleccione la Sub-Opción (opcional):</label>
-          <select name="sub_empresa" id="sub_empresa" style="display:none;">
-            <!-- Se rellenará dinámicamente -->
-          </select>
+
+        <div class="form-group" id="group-proceso" style="display:none;">
+          <label for="proceso">Proceso *</label>
+          <select id="proceso" name="proceso" required></select>
         </div>
-        <div class="form-group">
-          <label for="sub_sub_empresa" style="display:none;">Seleccione la Sub-Sub-Opción (opcional):</label>
-          <select name="sub_sub_empresa" id="sub_sub_empresa" style="display:none;">
-            <!-- Se rellenará dinámicamente -->
-          </select>
+
+        <div class="form-group" id="group-subproceso" style="display:none;">
+          <label for="subproceso">Subproceso (opcional)</label>
+          <select id="subproceso" name="subproceso"></select>
         </div>
+
         <div class="form-group">
-          <label for="cargo">Cargo:</label>
-          <input type="text" name="cargo" id="cargo" placeholder="Ej. Gerente de Ventas" required>
+          <label for="cargo">Cargo *</label>
+          <input type="text" id="cargo" name="cargo" required>
         </div>
-        <!-- Campo opcional: Número de celular -->
+
         <div class="form-group">
-          <label for="celular">Número de Celular (opcional):</label>
-          <input type="text" name="celular" id="celular" placeholder="Ingresa tu número de celular">
+          <label for="celular">Celular (opcional)</label>
+          <input type="text" id="celular" name="celular">
         </div>
-        <p class="info">
-          La contraseña se establecerá igual a la cédula y se cifrará automáticamente.
-        </p>
+
+        <p>La contraseña será igual a la cédula y se cifrará automáticamente.</p>
         <button type="submit">Crear Usuario</button>
       </form>
     </div>
   </div>
 
-  <!-- Script para el select cascada -->
   <script>
-    // Definición de los datos para cada empresa con sus sub-opciones (estos pueden usarse si lo deseas)
-    const empresaData = {
-      "Ferbienes": {
-        "Opción 1": ["Sub1-1", "Sub1-2", "Sub1-3"],
-        "Opción 2": ["Sub2-1", "Sub2-2", "Sub2-3"],
-        "Opción 3": ["Sub3-1", "Sub3-2", "Sub3-3"],
-        "Opción 4": ["Sub4-1", "Sub4-2", "Sub4-3"]
+    // Define aquí los procesos y subprocesos para cada empresa
+    const data = {
+      "Inversiones Ferbienes": {
+        "Finanzas": ["Cuentas por pagar","Cuentas por cobrar"],
+        "Recursos Humanos": ["Selección","Capacitación"]
+      },
+      "Comercializadora Agrosigo": {
+        "Director de operaciones": [],
+        "Auxiliar logístico - conductor": [],
+        "Auxiliar logístico - despacho derivados cárnicos": [],
+        "Auxiliar logístico - despacho desposte/porcionado": [],
+        "Auxiliar de inventarios": [],
+        "Auxiliar de mantenimiento": [],
+        "Supervisor de mantenimiento": [],
+        "Oficios varios": [],
+        "Servicios generales": [],
+        "Jefe de innovación y desarrollo": [],
+        "Asistente administrativo": [],
+        "Auxiliar de servicio al cliente - Restaurante Le'mont": [],
+        "Auxiliar de servicio al cliente - Restaurante Sabaneta": [],
+        "Auxiliar de servicio al cliente - Pal'asado Ferbienes": [],
+        "Auxiliar de servicio al cliente - Pal'asado Sabana Sur": [],
+        "Auxiliar de servicio al cliente - Pal'asado La Unión": [],
+        "Auxiliar de servicio al cliente - Recepción": [],
+        "Auxiliar de transporte": [],
+        "Conductor TAT": [],
+        "Auxiliar de cocina - Restaurante Sabaneta": [],
+        "Mercaderistas": [],
+        "Ejecutivo comercial": [],
+        "Asesor comercial": [],
+        "Auxiliar de desarrollo organizacional": [],
+        "Analista de desarrollo organizacional": [],
+        "Auxiliar de calidad": [],
+        "Coordinador de calidad": [],
+        "Director de calidad": [],
+        "Vendedor": [],
+        "Auxiliar de facturación": [],
+        "Auxiliar de tesoreria": [],
+        "Aprendiz": [],
+        "Auxiliar de contabilidad": [],
+        "Administrador punto de venta - Restaurante Sabaneta": [],
+        "Administrador punto de venta - Restaurante Le'mont": [],
+        "Líder de mercaderista": [],
+        "Asistente logística": [],
+        "Director comercial": [],
+        "Auxiliar de cartera": []
+      },
+      "Inversiones Tribilin": {
+        "Proyectos": ["Evaluación","Ejecución"],
+        "Legal": []
       },
       "Agrosigo": {
-        "Opción A": ["A1", "A2", "A3"],
-        "Opción B": ["B1", "B2", "B3"],
-        "Opción C": ["C1", "C2", "C3"],
-        "Opción D": ["D1", "D2", "D3"]
-      },
-      "Tribilin": {
-        "Sub A": ["TA1", "TA2", "TA3"],
-        "Sub B": ["TB1", "TB2", "TB3"],
-        "Sub C": ["TC1", "TC2", "TC3"],
-        "Sub D": ["TD1", "TD2", "TD3"]
-      },
-      "Agrosigo2": {
-        "Opción X": ["X1", "X2", "X3"],
-        "Opción Y": ["Y1", "Y2", "Y3"],
-        "Opción Z": ["Z1", "Z2", "Z3"],
-        "Opción W": ["W1", "W2", "W3"]
+        "Producción": ["Procesamiento","Empaque"],
+        "Calidad": []
       }
     };
 
-    const selectEmpresa = document.getElementById("empresa");
-    const selectSubEmpresa = document.getElementById("sub_empresa");
-    const selectSubSubEmpresa = document.getElementById("sub_sub_empresa");
+    const selEmpresa = document.getElementById('empresa');
+    const grpProc    = document.getElementById('group-proceso');
+    const selProc    = document.getElementById('proceso');
+    const grpSub     = document.getElementById('group-subproceso');
+    const selSub     = document.getElementById('subproceso');
 
-    // Cuando cambia el select de Empresa
-    selectEmpresa.addEventListener("change", function() {
-      // Limpiar y actualizar la visibilidad de los selects
-      selectSubEmpresa.innerHTML = "";
-      selectSubSubEmpresa.innerHTML = "";
-      document.querySelector("label[for='sub_empresa']").style.display = "block";
-      selectSubEmpresa.style.display = "block";
-      document.querySelector("label[for='sub_sub_empresa']").style.display = "none";
-      selectSubSubEmpresa.style.display = "none";
-      
-      const empresaElegida = this.value;
-      if (empresaElegida && empresaData[empresaElegida]) {
-        // Agregar opción predeterminada
-        let defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "Seleccione una opción (opcional)";
-        defaultOption.disabled = true;
-        defaultOption.selected = true;
-        selectSubEmpresa.appendChild(defaultOption);
-        
-        // Rellenar el select de sub-empresa
-        const subOpciones = Object.keys(empresaData[empresaElegida]);
-        subOpciones.forEach(function(subOp) {
-          let option = document.createElement("option");
-          option.value = subOp;
-          option.textContent = subOp;
-          selectSubEmpresa.appendChild(option);
+    selEmpresa.addEventListener('change', () => {
+      const procesos = data[ selEmpresa.value ] || null;
+      selProc.innerHTML    = "";
+      selSub.innerHTML     = "";
+      grpSub.style.display = "none";
+
+      if (procesos) {
+        grpProc.style.display = "block";
+        selProc.appendChild(new Option("— Selecciona proceso —","",true,true))
+               .disabled = true;
+        Object.keys(procesos).forEach(p => {
+          selProc.appendChild(new Option(p,p));
         });
+      } else {
+        grpProc.style.display = "none";
       }
     });
 
-    // Cuando cambia el select de Sub Empresa
-    selectSubEmpresa.addEventListener("change", function() {
-      // Limpiar y mostrar el select de sub-sub-empresa
-      selectSubSubEmpresa.innerHTML = "";
-      document.querySelector("label[for='sub_sub_empresa']").style.display = "block";
-      selectSubSubEmpresa.style.display = "block";
-      
-      const empresaElegida = selectEmpresa.value;
-      const subElegida = this.value;
-      if (empresaElegida && subElegida && empresaData[empresaElegida][subElegida]) {
-        let defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "Seleccione una opción (opcional)";
-        defaultOption.disabled = true;
-        defaultOption.selected = true;
-        selectSubSubEmpresa.appendChild(defaultOption);
-        
-        // Rellenar el select de sub-sub-empresa
-        empresaData[empresaElegida][subElegida].forEach(function(subSubOp) {
-          let option = document.createElement("option");
-          option.value = subSubOp;
-          option.textContent = subSubOp;
-          selectSubSubEmpresa.appendChild(option);
-        });
+    selProc.addEventListener('change', () => {
+      const subs = data[ selEmpresa.value ][ selProc.value ] || [];
+      selSub.innerHTML = "";
+      if (subs.length) {
+        grpSub.style.display = "block";
+        selSub.appendChild(new Option("— Selecciona subproceso —","",true,true))
+              .disabled = true;
+        subs.forEach(sp => selSub.appendChild(new Option(sp,sp)));
+      } else {
+        grpSub.style.display = "none";
       }
     });
   </script>
+
 </body>
 </html>
